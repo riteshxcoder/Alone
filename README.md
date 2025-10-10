@@ -39,19 +39,32 @@ Or deploy manually:
 # 1. Update system
 sudo apt update && sudo apt upgrade -y
 
-# 2. Install dependencies
-sudo apt install python3 python3-pip git screen -y
+# 2. Install system dependencies
+sudo apt install python3 python3-pip git ffmpeg screen -y
 
-# 3. Clone repo
+# 3. Clone the repository
 git clone https://github.com/TheAloneTeam/AloneMusic.git
 cd AloneMusic
 
-# 4. Install requirements
-pip3 install -r requirements.txt
+# 4. Install build backend (in case it's missing)
+pip install build setuptools wheel
 
-# 5. Setup environment
+# 5. Install project dependencies using pyproject.toml
+# (This automatically reads dependencies from pyproject.toml)
+pip install .
+
+# 6. Setup environment variables
 cp sample.env .env
-nano .env   # (add your BOT_TOKEN and PREFIX)
+nano .env    # Fill BOT_TOKEN, API_ID, API_HASH, etc.
 
-# 6. Run the bot
+# 7. (Optional) Run bot in a screen session so it keeps running
+screen -S alone
+
+# 8. Run the bot
 python3 -m AloneMusic.bot
+
+# 9. To detach from screen safely:
+# Ctrl + A + D
+
+# 10. To reattach:
+# screen -r alone
