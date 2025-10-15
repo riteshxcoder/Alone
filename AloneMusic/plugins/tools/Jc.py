@@ -46,7 +46,7 @@ async def ensure_assistant_joined(assistant, chat_id: int):
 async def monitor_vc_changes(chat_id: int):
     """Background task to monitor voice chat changes."""
     try:
-        assistant = await group_assistant(AMBOT, chat_id)
+        assistant = await group_assistant(Alone, chat_id)
         if not assistant:
             raise Exception("Assistant not found or not initialized.")
         
@@ -98,7 +98,7 @@ async def monitor_vc_changes(chat_id: int):
         while chat_id in VC_TRACKING_ENABLED:
             await asyncio.sleep(5)
 
-            assistant = await group_assistant(AMBOT, chat_id)
+            assistant = await group_assistant(Alone, chat_id)
             if not assistant:
                 raise Exception("Assistant not found or not initialized.")
 
