@@ -167,7 +167,7 @@ async def vc_info(client: Client, message: Message):
 
     if len(args) == 2 and args[1].lower() in ["on", "enable"]:
         if chat_id not in VC_TRACKING_ENABLED:
-            assistant = await group_assistant(AMBOT, chat_id)
+            assistant = await group_assistant(Alone, chat_id)
             if not assistant:
                 logger.error(f"Assistant not found for chat {chat_id}")
                 return await message.reply_text("❌ Assistant not found or not initialized.")
@@ -193,7 +193,7 @@ async def vc_info(client: Client, message: Message):
                 VC_MONITOR_TASKS.pop(chat_id, None)
             # Optionally stop the assistant if joined
             try:
-                assistant = await group_assistant(AMBOT, chat_id)
+                assistant = await group_assistant(Alone, chat_id)
                 if assistant:
                     await assistant.stop()
             except Exception as e:
@@ -203,7 +203,7 @@ async def vc_info(client: Client, message: Message):
         return await message.reply_text("❌ VC tracking is already disabled.")
 
     try:
-        assistant = await group_assistant(AMBOT, chat_id)
+        assistant = await group_assistant(Alone, chat_id)
         if not assistant:
             logger.error(f"Assistant not found for chat {chat_id}")
             return await message.reply_text("❌ Assistant not found. Make sure it has joined the group.")
