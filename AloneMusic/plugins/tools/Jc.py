@@ -8,7 +8,7 @@ from AloneMusic.core.call import Alone
 from AloneMusic.utils.admin_filters import admin_filter
 from AloneMusic.utils.ndatabase import group_assistant
 from AloneMusic import app
-from pytgcalls.exceptions import GroupCallNotFoundError  # Import the exception
+#from pytgcalls.exceptions import GroupCallNotFoundError  # Import the exception
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
