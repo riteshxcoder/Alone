@@ -4,30 +4,35 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait
 from config import BANNED_USERS
-from AloneMusic.core.call import Alone 
+from AloneMusic.core.call import Alone
 from AloneMusic.utils.admin_filters import admin_filter
 from AloneMusic.utils.ndatabase import group_assistant
 from AloneMusic import app
-#from pytgcalls.exceptions import GroupCallNotFoundError  # Import the exception
+
+# from pytgcalls.exceptions import GroupCallNotFoundError  # Import the exception
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 VC_CACHE = {}
 VC_TRACKING_ENABLED = set()
 VC_MONITOR_TASKS = {}
 
+
 async def is_voice_chat_active(client: Client, chat_id: int) -> bool:
     """Check if a voice chat is active using the main Pyrogram/Pyrofork client."""
     try:
         chat = await client.get_chat(chat_id)
-        active = getattr(chat, 'call_active', False)
+        active = getattr(chat, "call_active", False)
         logger.debug(f"Voice chat active for chat {chat_id}: {active}")
         return active
     except Exception as e:
         logger.error(f"Error checking voice chat active for chat {chat_id}: {e}")
         return False
+
 
 async def ensure_assistant_joined(assistant, chat_id: int):
     """Ensure the assistant joins the voice chat if not already joined."""
@@ -43,13 +48,14 @@ async def ensure_assistant_joined(assistant, chat_id: int):
         logger.error(f"Error joining voice chat for chat {chat_id}: {e}")
         return False
 
+
 async def monitor_vc_changes(chat_id: int):
     """Background task to monitor voice chat changes."""
     try:
         assistant = await group_assistant(Alone, chat_id)
         if not assistant:
             raise Exception("Assistant not found or not initialized.")
-        
+
         logger.info(f"Starting VC monitoring for chat {chat_id}")
 
         # Ensure voice chat is active and join if necessary
@@ -80,7 +86,9 @@ async def monitor_vc_changes(chat_id: int):
                 if vol:
                     status.append(f"Volume: {vol}")
 
-                joined_lines.append(f"#InVC\n<b>Name:</b> {name}\n<b>Status:</b> {', '.join(status)}")
+                joined_lines.append(
+                    f"#InVC\n<b>Name:</b> {name}\n<b>Status:</b> {', '.join(status)}"
+                )
 
             if joined_lines:
                 result = "\n\n".join(joined_lines)
@@ -90,7 +98,9 @@ async def monitor_vc_changes(chat_id: int):
                     await asyncio.sleep(30)
                     await msg.delete()
                 except Exception as e:
-                    logger.error(f"Error sending initial VC message for chat {chat_id}: {e}")
+                    logger.error(
+                        f"Error sending initial VC message for chat {chat_id}: {e}"
+                    )
 
         VC_CACHE[chat_id] = current_ids
 
@@ -152,7 +162,9 @@ async def monitor_vc_changes(chat_id: int):
     except Exception as e:
         logger.error(f"VC monitoring stopped for chat {chat_id}: {e}")
         try:
-            await app.send_message(chat_id, f"❌ VC monitoring stopped due to error: {e}")
+            await app.send_message(
+                chat_id, f"❌ VC monitoring stopped due to error: {e}"
+            )
         except Exception as e:
             logger.error(f"Error sending stop message for chat {chat_id}: {e}")
         finally:
@@ -160,7 +172,13 @@ async def monitor_vc_changes(chat_id: int):
             VC_CACHE.pop(chat_id, None)
             VC_MONITOR_TASKS.pop(chat_id, None)
 
-@app.on_message(filters.command(["vcinfo", "infovc", "vclogger"]) & filters.group & admin_filter & ~BANNED_USERS)
+
+@app.on_message(
+    filters.command(["vcinfo", "infovc", "vclogger"])
+    & filters.group
+    & admin_filter
+    & ~BANNED_USERS
+)
 async def vc_info(client: Client, message: Message):
     chat_id = message.chat.id
     args = message.text.split(None, 1)
@@ -170,18 +188,28 @@ async def vc_info(client: Client, message: Message):
             assistant = await group_assistant(Alone, chat_id)
             if not assistant:
                 logger.error(f"Assistant not found for chat {chat_id}")
-                return await message.reply_text("❌ Assistant not found or not initialized.")
+                return await message.reply_text(
+                    "❌ Assistant not found or not initialized."
+                )
             if not await is_voice_chat_active(app, chat_id):
-                logger.warning(f"No active voice chat for chat {chat_id} when enabling tracking")
-                return await message.reply_text("❌ No active voice chat found in this group. Start a voice chat first.")
+                logger.warning(
+                    f"No active voice chat for chat {chat_id} when enabling tracking"
+                )
+                return await message.reply_text(
+                    "❌ No active voice chat found in this group. Start a voice chat first."
+                )
             if not await ensure_assistant_joined(assistant, chat_id):
                 logger.warning(f"Failed to join VC for chat {chat_id}")
-                return await message.reply_text("❌ Failed to join the voice chat. Please check if a voice chat exists and the assistant has permissions.")
+                return await message.reply_text(
+                    "❌ Failed to join the voice chat. Please check if a voice chat exists and the assistant has permissions."
+                )
             VC_TRACKING_ENABLED.add(chat_id)
             task = asyncio.create_task(monitor_vc_changes(chat_id))
             VC_MONITOR_TASKS[chat_id] = task
             logger.info(f"VC tracking enabled for chat {chat_id}")
-            return await message.reply_text("✅ VC tracking enabled for this group. Now I'll track & notify #JoinedVC and #LeftVC users.")
+            return await message.reply_text(
+                "✅ VC tracking enabled for this group. Now I'll track & notify #JoinedVC and #LeftVC users."
+            )
         return await message.reply_text("✅ VC tracking is already enabled.")
 
     elif len(args) == 2 and args[1].lower() in ["off", "disable"]:
@@ -199,22 +227,32 @@ async def vc_info(client: Client, message: Message):
             except Exception as e:
                 logger.error(f"Error stopping assistant for chat {chat_id}: {e}")
             logger.info(f"VC tracking disabled for chat {chat_id}")
-            return await message.reply_text("❌ VC tracking disabled and cache cleared.")
+            return await message.reply_text(
+                "❌ VC tracking disabled and cache cleared."
+            )
         return await message.reply_text("❌ VC tracking is already disabled.")
 
     try:
         assistant = await group_assistant(Alone, chat_id)
         if not assistant:
             logger.error(f"Assistant not found for chat {chat_id}")
-            return await message.reply_text("❌ Assistant not found. Make sure it has joined the group.")
-        
+            return await message.reply_text(
+                "❌ Assistant not found. Make sure it has joined the group."
+            )
+
         if not await is_voice_chat_active(app, chat_id):
-            logger.warning(f"No active voice chat for chat {chat_id} when running vc_info")
-            return await message.reply_text("❌ No active voice chat found in this group. Start a voice chat first.")
+            logger.warning(
+                f"No active voice chat for chat {chat_id} when running vc_info"
+            )
+            return await message.reply_text(
+                "❌ No active voice chat found in this group. Start a voice chat first."
+            )
 
         if not await ensure_assistant_joined(assistant, chat_id):
             logger.warning(f"Failed to join VC for chat {chat_id}")
-            return await message.reply_text("❌ Failed to join the voice chat. Please check if a voice chat exists and the assistant has permissions.")
+            return await message.reply_text(
+                "❌ Failed to join the voice chat. Please check if a voice chat exists and the assistant has permissions."
+            )
 
         participants = await assistant.get_participants(chat_id)
 
@@ -247,7 +285,9 @@ async def vc_info(client: Client, message: Message):
                 if vol:
                     status.append(f"Volume: {vol}")
 
-                joined_lines.append(f"#InVC\n<b>Name:</b> {name}\n<b>Status:</b> {', '.join(status)}")
+                joined_lines.append(
+                    f"#InVC\n<b>Name:</b> {name}\n<b>Status:</b> {', '.join(status)}"
+                )
 
         if joined_lines:
             result = "\n\n".join(joined_lines)
@@ -255,7 +295,9 @@ async def vc_info(client: Client, message: Message):
             await message.reply_text(result)
 
     except FloodWait as fw:
-        logger.warning(f"FloodWait encountered for chat {chat_id}: waiting {fw.value} seconds")
+        logger.warning(
+            f"FloodWait encountered for chat {chat_id}: waiting {fw.value} seconds"
+        )
         await asyncio.sleep(fw.value)
         return await vc_info(client, message)
     except Exception as e:
