@@ -86,26 +86,24 @@ async def vc_logger(client: Client, message: Message):
     args = message.text.split(None, 1)
 
     if len(args) == 2 and args[1].lower() in ["on", "enable"]:
-        # Auto-enable VC logger in all groups where bot is added
-        async for dialog in app.get_dialogs():
-            gc = dialog.chat
-            if gc.type in ["group", "supergroup"]:
-                gc_id = gc.id
-                if gc_id in VC_TRACKING_ENABLED:
-                    continue
-                ok = await ensure_assistant_joined(gc_id)
-                if ok:
-                    VC_TRACKING_ENABLED.add(gc_id)
-                    VC_TASKS[gc_id] = asyncio.create_task(monitor_vc(gc_id))
-        await message.reply_text("✅ VC logger enabled in all groups.")
+        if chat_id in VC_TRACKING_ENABLED:
+            return await message.reply_text("✅ VC logger is already enabled in this group.")
+        ok = await ensure_assistant_joined(chat_id)
+        if not ok:
+            return await message.reply_text("ℹ️ No active VC found in this group.")
+        VC_TRACKING_ENABLED.add(chat_id)
+        VC_TASKS[chat_id] = asyncio.create_task(monitor_vc(chat_id))
+        await message.reply_text("✅ VC logger enabled in this group.")
 
     elif len(args) == 2 and args[1].lower() in ["off", "disable"]:
-        for gc_id in list(VC_TRACKING_ENABLED):
-            VC_TRACKING_ENABLED.discard(gc_id)
-            if gc_id in VC_TASKS:
-                VC_TASKS[gc_id].cancel()
-                VC_TASKS.pop(gc_id, None)
-        await message.reply_text("🚫 VC logger stopped in all groups.")
+        if chat_id in VC_TRACKING_ENABLED:
+            VC_TRACKING_ENABLED.discard(chat_id)
+            if chat_id in VC_TASKS:
+                VC_TASKS[chat_id].cancel()
+                VC_TASKS.pop(chat_id, None)
+            await message.reply_text("🚫 VC logger stopped in this group.")
+        else:
+            await message.reply_text("ℹ️ VC logger is not enabled in this group.")
 
     else:
         await message.reply_text("ℹ️ Use: /vclogger on | off")
