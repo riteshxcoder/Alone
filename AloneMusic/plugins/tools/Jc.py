@@ -2,7 +2,6 @@ import asyncio
 import logging
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from pyrogram.errors import FloodWait
 from pytgcalls.exceptions import AlreadyJoinedError, NoActiveGroupCall
 
 from config import BANNED_USERS
@@ -20,7 +19,7 @@ VC_TASKS = {}
 
 
 async def ensure_assistant_joined(chat_id: int):
-    """Check and join assistant to voice chat if active."""
+    """Ensure assistant is in VC."""
     try:
         assistant = await group_assistant(Alone, chat_id)
         if not await assistant.is_connected(chat_id):
@@ -65,8 +64,9 @@ async def monitor_vc(chat_id: int):
                 lines.append(f"🚪 <b>{user.mention}</b> left VC")
 
             if lines:
+                msg_text = "\n".join(lines)
                 msg = await app.send_message(
-                    chat_id, f"{'\n'.join(lines)}\n\n👥 <b>Now in VC:</b> {len(new_users)}"
+                    chat_id, f"{msg_text}\n\n👥 <b>Now in VC:</b> {len(new_users)}"
                 )
                 await asyncio.sleep(5)
                 await msg.delete()
@@ -86,10 +86,11 @@ async def vc_logger(client: Client, message: Message):
     args = message.text.split(None, 1)
 
     if len(args) == 2 and args[1].lower() in ["on", "enable"]:
-        # Auto-enable VC logger in ALL groups where bot is added
-        for dialog in await app.get_dialogs():
-            if dialog.chat.type in ["group", "supergroup"]:
-                gc_id = dialog.chat.id
+        # Auto-enable VC logger in all groups where bot is added
+        async for dialog in app.get_dialogs():
+            gc = dialog.chat
+            if gc.type in ["group", "supergroup"]:
+                gc_id = gc.id
                 if gc_id in VC_TRACKING_ENABLED:
                     continue
                 ok = await ensure_assistant_joined(gc_id)
@@ -97,6 +98,7 @@ async def vc_logger(client: Client, message: Message):
                     VC_TRACKING_ENABLED.add(gc_id)
                     VC_TASKS[gc_id] = asyncio.create_task(monitor_vc(gc_id))
         await message.reply_text("✅ VC logger enabled in all groups.")
+
     elif len(args) == 2 and args[1].lower() in ["off", "disable"]:
         for gc_id in list(VC_TRACKING_ENABLED):
             VC_TRACKING_ENABLED.discard(gc_id)
@@ -104,5 +106,6 @@ async def vc_logger(client: Client, message: Message):
                 VC_TASKS[gc_id].cancel()
                 VC_TASKS.pop(gc_id, None)
         await message.reply_text("🚫 VC logger stopped in all groups.")
+
     else:
         await message.reply_text("ℹ️ Use: /vclogger on | off")
