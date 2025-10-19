@@ -3,7 +3,7 @@ import logging
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait
-from pytgcalls.exceptions import GroupCallNotFoundError
+from pytgcalls.exceptions import AlreadyJoinedError, NoActiveGroupCall
 
 from config import BANNED_USERS
 from AloneMusic import app
@@ -11,7 +11,6 @@ from AloneMusic.core.call import Alone
 from AloneMusic.utils.admin_filters import admin_filter
 from AloneMusic.utils.ndatabase import group_assistant
 
-# Logging Setup
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s - %(levelname)s] - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -20,39 +19,39 @@ VC_CACHE = {}
 VC_TASKS = {}
 
 
-async def check_vc_active(chat_id: int):
-    """Check if a VC exists (without joining)."""
+async def ensure_assistant_joined(chat_id: int):
+    """Check and join assistant to voice chat if active."""
     try:
         assistant = await group_assistant(Alone, chat_id)
-        participants = await assistant.get_participants(chat_id)
-        logger.info(f"🔎 VC check for {chat_id}: Active ({len(participants)} users)")
-        return participants
-    except GroupCallNotFoundError:
+        if not await assistant.is_connected(chat_id):
+            await assistant.join_group_call(chat_id)
+        logger.info(f"✅ Assistant joined voice chat in {chat_id}")
+        return True
+    except AlreadyJoinedError:
+        logger.info(f"ℹ️ Assistant already joined in {chat_id}")
+        return True
+    except NoActiveGroupCall:
         logger.info(f"🚫 No active VC found for {chat_id}")
-        return None
+        return False
     except Exception as e:
-        logger.error(f"❌ Error checking VC in {chat_id}: {e}")
-        return None
+        logger.error(f"❌ Error joining VC for {chat_id}: {e}")
+        return False
 
 
 async def monitor_vc(chat_id: int):
-    """Monitor VC participants without assistant joining."""
+    """Monitor VC participants and auto-delete messages after 5s."""
     try:
         assistant = await group_assistant(Alone, chat_id)
-        participants = await check_vc_active(chat_id)
-        if not participants:
-            raise GroupCallNotFoundError
-
-        old_users = set(p.user_id for p in participants)
+        assistant_id = (await app.get_me()).id
+        participants = await assistant.get_participants(chat_id)
+        old_users = set(p.user_id for p in participants if p.user_id != assistant_id)
         VC_CACHE[chat_id] = old_users
 
         while chat_id in VC_TRACKING_ENABLED:
             await asyncio.sleep(5)
-            participants = await check_vc_active(chat_id)
-            if not participants:
-                raise GroupCallNotFoundError
+            participants = await assistant.get_participants(chat_id)
+            new_users = set(p.user_id for p in participants if p.user_id != assistant_id)
 
-            new_users = set(p.user_id for p in participants)
             joined = new_users - old_users
             left = old_users - new_users
             old_users = new_users
@@ -66,10 +65,12 @@ async def monitor_vc(chat_id: int):
                 lines.append(f"🚪 <b>{user.mention}</b> left VC")
 
             if lines:
-                msg = "\n".join(lines)
-                await app.send_message(chat_id, f"{msg}\n\n👥 <b>Now in VC:</b> {len(new_users)}")
-
-    except GroupCallNotFoundError:
+                msg = await app.send_message(
+                    chat_id, f"{'\n'.join(lines)}\n\n👥 <b>Now in VC:</b> {len(new_users)}"
+                )
+                await asyncio.sleep(5)
+                await msg.delete()
+    except NoActiveGroupCall:
         logger.info(f"❌ VC ended in {chat_id}, stopping monitor.")
     except Exception as e:
         logger.error(f"Error monitoring VC {chat_id}: {e}")
@@ -79,49 +80,29 @@ async def monitor_vc(chat_id: int):
         VC_TASKS.pop(chat_id, None)
 
 
-@app.on_message(filters.command(["vcinfo", "vclogger"]) & filters.group & admin_filter & ~BANNED_USERS)
-async def vc_info(client: Client, message: Message):
+@app.on_message(filters.command(["vclogger"]) & filters.group & admin_filter & ~BANNED_USERS)
+async def vc_logger(client: Client, message: Message):
     chat_id = message.chat.id
     args = message.text.split(None, 1)
 
-    # 🟢 Enable VC Logger
     if len(args) == 2 and args[1].lower() in ["on", "enable"]:
-        if chat_id in VC_TRACKING_ENABLED:
-            return await message.reply_text("✅ VC tracking is already enabled.")
-        participants = await check_vc_active(chat_id)
-        if not participants:
-            return await message.reply_text("ℹ️ No active voice chat found in this group.")
-        VC_TRACKING_ENABLED.add(chat_id)
-        VC_TASKS[chat_id] = asyncio.create_task(monitor_vc(chat_id))
-        await message.reply_text("✅ VC monitoring started (assistant will not join).")
-        return
-
-    # 🔴 Disable VC Logger
+        # Auto-enable VC logger in ALL groups where bot is added
+        for dialog in await app.get_dialogs():
+            if dialog.chat.type in ["group", "supergroup"]:
+                gc_id = dialog.chat.id
+                if gc_id in VC_TRACKING_ENABLED:
+                    continue
+                ok = await ensure_assistant_joined(gc_id)
+                if ok:
+                    VC_TRACKING_ENABLED.add(gc_id)
+                    VC_TASKS[gc_id] = asyncio.create_task(monitor_vc(gc_id))
+        await message.reply_text("✅ VC logger enabled in all groups.")
     elif len(args) == 2 and args[1].lower() in ["off", "disable"]:
-        if chat_id not in VC_TRACKING_ENABLED:
-            return await message.reply_text("❌ VC tracking is already disabled.")
-        VC_TRACKING_ENABLED.discard(chat_id)
-        if chat_id in VC_TASKS:
-            VC_TASKS[chat_id].cancel()
-            VC_TASKS.pop(chat_id, None)
-        await message.reply_text("🚫 VC monitoring stopped and cache cleared.")
-        return
-
-    # ℹ️ Show VC info (without joining)
-    try:
-        participants = await check_vc_active(chat_id)
-        if not participants:
-            return await message.reply_text("ℹ️ No active voice chat found in this group.")
-        names = []
-        for p in participants:
-            user = await app.get_users(p.user_id)
-            names.append(f"🎧 {user.mention}")
-        await message.reply_text("\n".join(names) + f"\n\n👥 <b>Total in VC:</b> {len(names)}")
-    except GroupCallNotFoundError:
-        await message.reply_text("ℹ️ No active voice chat found in this group.")
-    except FloodWait as fw:
-        await asyncio.sleep(fw.value)
-        await vc_info(client, message)
-    except Exception as e:
-        logger.error(f"Error in vc_info: {e}")
-        await message.reply_text(f"❌ Error fetching VC info:\n<b>{e}</b>")
+        for gc_id in list(VC_TRACKING_ENABLED):
+            VC_TRACKING_ENABLED.discard(gc_id)
+            if gc_id in VC_TASKS:
+                VC_TASKS[gc_id].cancel()
+                VC_TASKS.pop(gc_id, None)
+        await message.reply_text("🚫 VC logger stopped in all groups.")
+    else:
+        await message.reply_text("ℹ️ Use: /vclogger on | off")
