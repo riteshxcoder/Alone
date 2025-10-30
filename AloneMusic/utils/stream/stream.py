@@ -9,8 +9,8 @@
 import os
 from random import randint
 from typing import Union
-
 from pyrogram.types import InlineKeyboardMarkup
+import yt_dlp
 
 import config
 from AloneMusic import Carbon, YouTube, app
@@ -41,87 +41,92 @@ async def stream(
         return
     if forceplay:
         await Alone.force_stop_stream(chat_id)
-    if streamtype == "playlist":
-        msg = f"{_['play_19']}\n\n"
-        count = 0
-        for search in result:
-            if int(count) == config.PLAYLIST_FETCH_LIMIT:
-                continue
+
+    # ────────────────────────────────
+    # 🎧 YOUTUBE STREAM
+    # ────────────────────────────────
+    if streamtype == "youtube":
+        link = result["link"]
+        vidid = result["vidid"]
+        title = (result["title"]).title()
+        duration_min = result["duration_min"]
+        thumbnail = result["thumb"]
+        status = True if video else None
+
+        try:
+            file_path, direct = await YouTube.download(
+                vidid, mystic, videoid=True, video=status
+            )
+            if not file_path:
+                raise Exception("Empty file path")
+        except Exception as ex:
+            print(f"[DOWNLOAD ERROR] {ex}")
             try:
-                (
-                    title,
-                    duration_min,
-                    duration_sec,
-                    thumbnail,
-                    vidid,
-                ) = await YouTube.details(search, False if spotify else True)
-            except:
-                continue
-            if str(duration_min) == "None":
-                continue
-            if duration_sec > config.DURATION_LIMIT:
-                continue
-            if await is_active_chat(chat_id):
-                await put_queue(
-                    chat_id,
-                    original_chat_id,
-                    f"vid_{vidid}",
-                    title,
+                ydl = yt_dlp.YoutubeDL({"quiet": True})
+                info = ydl.extract_info(
+                    f"https://www.youtube.com/watch?v={vidid}", download=False
+                )
+                file_path = info["url"]
+                direct = False
+                print("[FALLBACK] Using direct yt-dlp link.")
+            except Exception as e2:
+                print(f"[FALLBACK ERROR] {e2}")
+                raise AssistantErr(_["play_14"])
+
+        # If VC already active
+        if await is_active_chat(chat_id):
+            await put_queue(
+                chat_id,
+                original_chat_id,
+                file_path if direct else f"vid_{vidid}",
+                title,
+                duration_min,
+                user_name,
+                vidid,
+                user_id,
+                "video" if video else "audio",
+            )
+            pos = len(db.get(chat_id)) - 1
+            btn = aq_markup(_, chat_id)
+            await app.send_message(
+                chat_id=original_chat_id,
+                text=_["queue_4"].format(pos, title[:27], duration_min, user_name),
+                reply_markup=InlineKeyboardMarkup(btn),
+            )
+        else:
+            if not forceplay:
+                db[chat_id] = []
+            await Alone.join_call(
+                chat_id, original_chat_id, file_path, video=status, image=thumbnail
+            )
+            await put_queue(
+                chat_id,
+                original_chat_id,
+                file_path if direct else f"vid_{vidid}",
+                title,
+                duration_min,
+                user_name,
+                vidid,
+                user_id,
+                "video" if video else "audio",
+                forceplay=forceplay,
+            )
+            img = await get_thumb(vidid)
+            btn = stream_markup(_, chat_id)
+            run = await app.send_photo(
+                original_chat_id,
+                photo=img,
+                has_spoiler=True,
+                caption=_["stream_1"].format(
+                    f"https://t.me/{app.username}?start=info_{vidid}",
+                    title[:23],
                     duration_min,
                     user_name,
-                    vidid,
-                    user_id,
-                    "video" if video else "audio",
-                )
-                position = len(db.get(chat_id)) - 1
-                count += 1
-                msg += f"{count}. {title[:70]}\n"
-                msg += f"{_['play_20']} {position}\n\n"
-            else:
-                if not forceplay:
-                    db[chat_id] = []
-                status = True if video else None
-                try:
-                    file_path, direct = await YouTube.download(
-                        vidid, mystic, video=status, videoid=True
-                    )
-                except:
-                    raise AssistantErr(_["play_14"])
-                await Alone.join_call(
-                    chat_id,
-                    original_chat_id,
-                    file_path,
-                    video=status,
-                    image=thumbnail,
-                )
-                await put_queue(
-                    chat_id,
-                    original_chat_id,
-                    file_path if direct else f"vid_{vidid}",
-                    title,
-                    duration_min,
-                    user_name,
-                    vidid,
-                    user_id,
-                    "video" if video else "audio",
-                    forceplay=forceplay,
-                )
-                img = await get_thumb(vidid)
-                button = stream_markup(_, chat_id)
-                run = await app.send_photo(
-                    original_chat_id,
-                    photo=img,
-                    has_spoiler=True,
-                    caption=_["stream_1"].format(
-                        f"https://t.me/{app.username}?start=info_{vidid}",
-                        title[:23],
-                        duration_min,
-                        user_name,
-                    ),
-                    reply_markup=InlineKeyboardMarkup(button),
-                )
-                db[chat_id][0]["mystic"] = run
-                db[chat_id][0]["markup"] = "stream"
+                ),
+                reply_markup=InlineKeyboardMarkup(btn),
+            )
+            db[chat_id][0]["mystic"] = run
+            db[chat_id][0]["markup"] = "stream"
         if count == 0:
             return
         else:
