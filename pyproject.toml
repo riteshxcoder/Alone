@@ -1,57 +1,82 @@
 [build-system]
-requires = ["setuptools==80.9.0"]
+requires = ["setuptools>=70.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "AloneMusic"
 version = "0.1.0"
-description = "🎵 Telegram Music Bot by TheAloneTeam"
+description = "🎵 Advanced Telegram Music Bot by TheAloneTeam — PyroFork + ntgcalls + YouTube + Spotify"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
-license-files = ["LICENSE"]
+license = { text = "MIT" }
 authors = [
   { name = "TheAloneTeam", email = "thealoneteam@github.com" }
 ]
-keywords = ["telegram", "music", "bot", "pyrogram", "pytgcalls"]
+keywords = ["telegram", "music", "bot", "pyrogram", "pyrofork", "pytgcalls", "youtube", "spotify"]
 classifiers = [
   "Environment :: Console",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Topic :: Internet",
   "Topic :: Utilities",
 ]
 
+# ───────────────────────────────
+# 🔧 CORE DEPENDENCIES
+# ───────────────────────────────
 dependencies = [
+    # Async & Web
     "aiofiles",
-    "aiohttp",
+    "aiohttp>=3.9.5",
     "apscheduler",
     "beautifulsoup4",
     "dnspython",
-    "ffmpeg-python",
     "gitpython",
     "hachoir",
-    "heroku3",
-    "humanize",
-    "motor",
-    "Pillow==9.5.0",
-    "psutil",
     "httpx==0.27.2",
-    "ntgcalls==1.1.2",
-    "py-tgcalls==1.2.9",
-    "pykeyboard",
-    "pyrofork",
+    "humanize",
+    "requests",
     "python-dotenv",
     "pyyaml",
-    "requests",
-    "speedtest-cli",
-    "spotipy",
-    "tgcrypto",
     "unidecode",
-    "yt-dlp>=2025.01.15",
+
+    # Telegram
+    "tgcrypto",
+    "pyrofork>=2.3.45",
+    "pykeyboard",
+
+    # Voice / Music Framework
+    "ffmpeg-python",
+    "ntgcalls==1.1.2",
+    "py-tgcalls==1.2.9",
+
+    # Database / Utility
+    "motor>=3.4.0",
+    "psutil",
+    "heroku3",
+
+    # Image / Media
+    "Pillow==9.5.0",
+
+    # Speedtest & Tools
+    "speedtest-cli",
+
+    # Music & Streaming
+    "spotipy",
+    "yt-dlp>=2025.02.01",
     "youtube-search",
-    "youtube-search-python"
+    "youtube-search-python>=1.6.6",
+    "pytube>=15.0.0",
+    "ytmusicapi>=1.4.0",
+
+    # Optional AI / Helper
+    "openai>=1.40.0",
+    "prettytable"
 ]
 
 [tool.setuptools.packages.find]
