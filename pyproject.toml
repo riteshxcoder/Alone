@@ -67,12 +67,12 @@ dependencies = [
     "speedtest-cli",
 
     # Music & Streaming
-    "spotipy",
-    "yt-dlp>=2025.02.01",
-    "youtube-search",
-    "youtube-search-python>=1.6.6",
-    "pytube>=15.0.0",
-    "ytmusicapi>=1.4.0",
+    "spotipy==2.25.1",
+    "yt-dlp==2025.10.22",
+    "youtube-search==2.1.2",
+    "youtube-search-python==1.6.6",
+    "pytube==15.0.0",
+    "ytmusicapi==1.11.0",
 
     # Optional AI / Helper
     "openai>=1.40.0",
