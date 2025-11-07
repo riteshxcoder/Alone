@@ -13,9 +13,9 @@ from pytgcalls.types import AudioQuality, ChatUpdate, MediaStream, StreamEnded, 
 
 import config
 from strings import get_string
-from ANNIEMUSIC import LOGGER, YouTube, app
-from ANNIEMUSIC.misc import db
-from ANNIEMUSIC.utils.database import (
+from AloneMusic import LOGGER, YouTube, app
+from AloneMusic.misc import db
+from AloneMusic.utils.database import (
     add_active_chat,
     add_active_video_chat,
     get_lang,
@@ -27,13 +27,11 @@ from ANNIEMUSIC.utils.database import (
     remove_active_video_chat,
     set_loop,
 )
-from ANNIEMUSIC.utils.exceptions import AssistantErr
-from ANNIEMUSIC.utils.formatters import check_duration, seconds_to_min, speed_converter
-from ANNIEMUSIC.utils.inline.play import stream_markup
-from ANNIEMUSIC.utils.stream.autoclear import auto_clean
-from ANNIEMUSIC.utils.thumbnails import get_thumb
-from ANNIEMUSIC.utils.errors import capture_internal_err, send_large_error
-
+from AloneMusic.utils.exceptions import AssistantErr
+from AloneMusic.utils.formatters import check_duration, seconds_to_min, speed_converter
+from AloneMusic.utils.inline.play import stream_markup
+from AloneMusic.utils.stream.autoclear import auto_clean
+from AloneMusic.utils.thumbnails import get_thumb
 autoend = {}
 counter = {}
 
@@ -86,27 +84,22 @@ class Call:
         self.active_calls: set[int] = set()
 
 
-    @capture_internal_err
     async def pause_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.pause(chat_id)
 
-    @capture_internal_err
     async def resume_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.resume(chat_id)
 
-    @capture_internal_err
     async def mute_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.mute(chat_id)
 
-    @capture_internal_err
     async def unmute_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await assistant.unmute(chat_id)
 
-    @capture_internal_err
     async def stop_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         await _clear_(chat_id)
@@ -119,8 +112,6 @@ class Call:
         finally:
             self.active_calls.discard(chat_id)
 
-
-    @capture_internal_err
     async def force_stop_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
         try:
@@ -141,20 +132,16 @@ class Call:
         finally:
             self.active_calls.discard(chat_id)
 
-
-    @capture_internal_err
     async def skip_stream(self, chat_id: int, link: str, video: Union[bool, str] = None, image: Union[bool, str] = None) -> None:
         assistant = await group_assistant(self, chat_id)
         stream = dynamic_media_stream(path=link, video=bool(video))
         await assistant.play(chat_id, stream)
 
-    @capture_internal_err
     async def vc_users(self, chat_id: int) -> list:
         assistant = await group_assistant(self, chat_id)
         participants = await assistant.get_participants(chat_id)
         return [p.user_id for p in participants if not p.is_muted]
 
-    @capture_internal_err
     async def seek_stream(self, chat_id: int, file_path: str, to_seek: str, duration: str, mode: str) -> None:
         assistant = await group_assistant(self, chat_id)
         ffmpeg_params = f"-ss {to_seek} -to {duration}"
@@ -162,7 +149,6 @@ class Call:
         stream = dynamic_media_stream(path=file_path, video=is_video, ffmpeg_params=ffmpeg_params)
         await assistant.play(chat_id, stream)
 
-    @capture_internal_err
     async def speedup_stream(self, chat_id: int, file_path: str, speed: float, playing: list) -> None:
         if not isinstance(playing, list) or not playing or not isinstance(playing[0], dict):
             raise AssistantErr("Invalid stream info for speedup.")
@@ -202,7 +188,6 @@ class Call:
         })
 
 
-    @capture_internal_err
     async def stream_call(self, link: str) -> None:
         assistant = await group_assistant(self, config.LOGGER_ID)
         try:
@@ -214,7 +199,6 @@ class Call:
             except:
                 pass
 
-    @capture_internal_err
     async def join_call(
         self,
         chat_id: int,
@@ -250,8 +234,6 @@ class Call:
             if users == 1:
                 autoend[chat_id] = datetime.now() + timedelta(minutes=1)
 
-
-    @capture_internal_err
     async def play(self, client, chat_id: int) -> None:
         check = db.get(chat_id)
         popped = None
@@ -317,6 +299,7 @@ class Call:
                 run = await app.send_photo(
                     chat_id=original_chat_id,
                     photo=img,
+                    has_spoiler=True,
                     caption=_["stream_1"].format(
                         f"https://t.me/{app.username}?start=info_{videoid}",
                         title[:23],
@@ -354,6 +337,7 @@ class Call:
                 run = await app.send_photo(
                     chat_id=original_chat_id,
                     photo=img,
+                    has_spoiler=True,
                     caption=_["stream_1"].format(
                         f"https://t.me/{app.username}?start=info_{videoid}",
                         title[:23],
@@ -376,6 +360,7 @@ class Call:
                 run = await app.send_photo(
                     chat_id=original_chat_id,
                     photo=config.STREAM_IMG_URL,
+                    has_spoiler=True,
                     caption=_["stream_2"].format(user),
                     reply_markup=InlineKeyboardMarkup(button),
                 )
@@ -411,6 +396,7 @@ class Call:
                     run = await app.send_photo(
                         chat_id=original_chat_id,
                         photo=config.SOUNCLOUD_IMG_URL,
+                        has_spoiler=True,
                         caption=_["stream_1"].format(
                             config.SUPPORT_CHAT, title[:23], check[0]["dur"], user
                         ),
@@ -426,6 +412,7 @@ class Call:
                         run = await app.send_photo(
                             chat_id=original_chat_id,
                             photo=img,
+                            has_spoiler=True,
                             caption=_["stream_1"].format(
                                 f"https://t.me/{app.username}?start=info_{videoid}",
                                 title[:23],
@@ -440,6 +427,7 @@ class Call:
                         run = await app.send_photo(
                             chat_id=original_chat_id,
                             photo=img,
+                            has_spoiler=True,
                             caption=_["stream_1"].format(
                                 f"https://t.me/{app.username}?start=info_{videoid}",
                                 title[:23],
@@ -465,7 +453,6 @@ class Call:
         if config.STRING5:
             await self.five.start()
 
-    @capture_internal_err
     async def ping(self) -> str:
         pings = []
         if config.STRING1:
@@ -480,7 +467,6 @@ class Call:
             pings.append(self.five.ping)
         return str(round(sum(pings) / len(pings), 3)) if pings else "0.0"
 
-    @capture_internal_err
     async def decorators(self) -> None:
         assistants = list(filter(None, [self.one, self.two, self.three, self.four, self.five]))
 
@@ -521,4 +507,4 @@ class Call:
             assistant.on_update()(unified_update_handler)
 
 
-JARVIS = Call()
+Alone = Call()
