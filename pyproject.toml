@@ -52,8 +52,8 @@ dependencies = [
 
     # Voice / Music Framework
     "ffmpeg-python",
-    "ntgcalls==1.1.2",
-    "py-tgcalls==1.2.9",
+    "ntgcalls==2.0.6",
+    "py-tgcalls==2.2.8",
 
     # Database / Utility
     "motor>=3.4.0",
