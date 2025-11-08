@@ -1,8 +1,4 @@
 ---
-
-## 🌐 `CODE_OF_CONDUCT.md`
-
-```markdown
 # 🤝 AloneMusic Code of Conduct
 
 Welcome to **AloneMusic**, a community-driven open-source project.  
