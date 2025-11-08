@@ -32,7 +32,6 @@ from AloneMusic.utils.logger import play_logs
 from AloneMusic.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 
-
 EMOJII = [
     "🔥",
     "💋",
