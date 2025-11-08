@@ -9,7 +9,14 @@ from pyrogram.errors import FloodWait, ChatAdminRequired
 from pyrogram.types import InlineKeyboardMarkup
 from pytgcalls import PyTgCalls
 from pytgcalls.exceptions import NoActiveGroupCall
-from pytgcalls.types import AudioQuality, ChatUpdate, MediaStream, StreamEnded, Update, VideoQuality
+from pytgcalls.types import (
+    AudioQuality,
+    ChatUpdate,
+    MediaStream,
+    StreamEnded,
+    Update,
+    VideoQuality,
+)
 
 import config
 from strings import get_string
@@ -32,18 +39,25 @@ from AloneMusic.utils.formatters import check_duration, seconds_to_min, speed_co
 from AloneMusic.utils.inline.play import stream_markup
 from AloneMusic.utils.stream.autoclear import auto_clean
 from AloneMusic.utils.thumbnails import get_thumb
+
 autoend = {}
 counter = {}
 
-def dynamic_media_stream(path: str, video: bool = False, ffmpeg_params: str = None) -> MediaStream:
+
+def dynamic_media_stream(
+    path: str, video: bool = False, ffmpeg_params: str = None
+) -> MediaStream:
     return MediaStream(
         audio_path=path,
         media_path=path,
         audio_parameters=AudioQuality.MEDIUM if video else AudioQuality.STUDIO,
         video_parameters=VideoQuality.HD_720p if video else VideoQuality.SD_360p,
-        video_flags=(MediaStream.Flags.AUTO_DETECT if video else MediaStream.Flags.IGNORE),
+        video_flags=(
+            MediaStream.Flags.AUTO_DETECT if video else MediaStream.Flags.IGNORE
+        ),
         ffmpeg_parameters=ffmpeg_params,
     )
+
 
 async def _clear_(chat_id: int) -> None:
     popped = db.pop(chat_id, None)
@@ -54,35 +68,70 @@ async def _clear_(chat_id: int) -> None:
     await remove_active_chat(chat_id)
     await set_loop(chat_id, 0)
 
+
 class Call:
     def __init__(self):
-        self.userbot1 = Client(
-            "AnnieXAssis1", config.API_ID, config.API_HASH, session_string=config.STRING1
-        ) if config.STRING1 else None
+        self.userbot1 = (
+            Client(
+                "AnnieXAssis1",
+                config.API_ID,
+                config.API_HASH,
+                session_string=config.STRING1,
+            )
+            if config.STRING1
+            else None
+        )
         self.one = PyTgCalls(self.userbot1) if self.userbot1 else None
 
-        self.userbot2 = Client(
-            "AnnieXAssis2", config.API_ID, config.API_HASH, session_string=config.STRING2
-        ) if config.STRING2 else None
+        self.userbot2 = (
+            Client(
+                "AnnieXAssis2",
+                config.API_ID,
+                config.API_HASH,
+                session_string=config.STRING2,
+            )
+            if config.STRING2
+            else None
+        )
         self.two = PyTgCalls(self.userbot2) if self.userbot2 else None
 
-        self.userbot3 = Client(
-            "AnnieXAssis3", config.API_ID, config.API_HASH, session_string=config.STRING3
-        ) if config.STRING3 else None
+        self.userbot3 = (
+            Client(
+                "AnnieXAssis3",
+                config.API_ID,
+                config.API_HASH,
+                session_string=config.STRING3,
+            )
+            if config.STRING3
+            else None
+        )
         self.three = PyTgCalls(self.userbot3) if self.userbot3 else None
 
-        self.userbot4 = Client(
-            "AnnieXAssis4", config.API_ID, config.API_HASH, session_string=config.STRING4
-        ) if config.STRING4 else None
+        self.userbot4 = (
+            Client(
+                "AnnieXAssis4",
+                config.API_ID,
+                config.API_HASH,
+                session_string=config.STRING4,
+            )
+            if config.STRING4
+            else None
+        )
         self.four = PyTgCalls(self.userbot4) if self.userbot4 else None
 
-        self.userbot5 = Client(
-            "AnnieXAssis5", config.API_ID, config.API_HASH, session_string=config.STRING5
-        ) if config.STRING5 else None
+        self.userbot5 = (
+            Client(
+                "AnnieXAssis5",
+                config.API_ID,
+                config.API_HASH,
+                session_string=config.STRING5,
+            )
+            if config.STRING5
+            else None
+        )
         self.five = PyTgCalls(self.userbot5) if self.userbot5 else None
 
         self.active_calls: set[int] = set()
-
 
     async def pause_stream(self, chat_id: int) -> None:
         assistant = await group_assistant(self, chat_id)
@@ -132,7 +181,13 @@ class Call:
         finally:
             self.active_calls.discard(chat_id)
 
-    async def skip_stream(self, chat_id: int, link: str, video: Union[bool, str] = None, image: Union[bool, str] = None) -> None:
+    async def skip_stream(
+        self,
+        chat_id: int,
+        link: str,
+        video: Union[bool, str] = None,
+        image: Union[bool, str] = None,
+    ) -> None:
         assistant = await group_assistant(self, chat_id)
         stream = dynamic_media_stream(path=link, video=bool(video))
         await assistant.play(chat_id, stream)
@@ -142,15 +197,25 @@ class Call:
         participants = await assistant.get_participants(chat_id)
         return [p.user_id for p in participants if not p.is_muted]
 
-    async def seek_stream(self, chat_id: int, file_path: str, to_seek: str, duration: str, mode: str) -> None:
+    async def seek_stream(
+        self, chat_id: int, file_path: str, to_seek: str, duration: str, mode: str
+    ) -> None:
         assistant = await group_assistant(self, chat_id)
         ffmpeg_params = f"-ss {to_seek} -to {duration}"
         is_video = mode == "video"
-        stream = dynamic_media_stream(path=file_path, video=is_video, ffmpeg_params=ffmpeg_params)
+        stream = dynamic_media_stream(
+            path=file_path, video=is_video, ffmpeg_params=ffmpeg_params
+        )
         await assistant.play(chat_id, stream)
 
-    async def speedup_stream(self, chat_id: int, file_path: str, speed: float, playing: list) -> None:
-        if not isinstance(playing, list) or not playing or not isinstance(playing[0], dict):
+    async def speedup_stream(
+        self, chat_id: int, file_path: str, speed: float, playing: list
+    ) -> None:
+        if (
+            not isinstance(playing, list)
+            or not playing
+            or not isinstance(playing[0], dict)
+        ):
             raise AssistantErr("Invalid stream info for speedup.")
 
         assistant = await group_assistant(self, chat_id)
@@ -162,31 +227,38 @@ class Call:
         if not os.path.exists(out):
             vs = str(2.0 / float(speed))
             cmd = f"ffmpeg -i {file_path} -filter:v setpts={vs}*PTS -filter:a atempo={speed} {out}"
-            proc = await asyncio.create_subprocess_shell(cmd, stdin=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+            proc = await asyncio.create_subprocess_shell(
+                cmd, stdin=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            )
             await proc.communicate()
 
-        dur = int(await asyncio.get_event_loop().run_in_executor(None, check_duration, out))
+        dur = int(
+            await asyncio.get_event_loop().run_in_executor(None, check_duration, out)
+        )
         played, con_seconds = speed_converter(playing[0]["played"], speed)
         duration_min = seconds_to_min(dur)
         is_video = playing[0]["streamtype"] == "video"
         ffmpeg_params = f"-ss {played} -to {duration_min}"
-        stream = dynamic_media_stream(path=out, video=is_video, ffmpeg_params=ffmpeg_params)
+        stream = dynamic_media_stream(
+            path=out, video=is_video, ffmpeg_params=ffmpeg_params
+        )
 
         if chat_id in db and db[chat_id] and db[chat_id][0].get("file") == file_path:
             await assistant.play(chat_id, stream)
         else:
             raise AssistantErr("Stream mismatch during speedup.")
 
-        db[chat_id][0].update({
-            "played": con_seconds,
-            "dur": duration_min,
-            "seconds": dur,
-            "speed_path": out,
-            "speed": speed,
-            "old_dur": db[chat_id][0].get("dur"),
-            "old_second": db[chat_id][0].get("seconds"),
-        })
-
+        db[chat_id][0].update(
+            {
+                "played": con_seconds,
+                "dur": duration_min,
+                "seconds": dur,
+                "speed_path": out,
+                "speed": speed,
+                "old_dur": db[chat_id][0].get("dur"),
+                "old_second": db[chat_id][0].get("seconds"),
+            }
+        )
 
     async def stream_call(self, link: str) -> None:
         assistant = await group_assistant(self, config.LOGGER_ID)
@@ -219,9 +291,7 @@ class Call:
         except TelegramServerError:
             raise AssistantErr(_["call_10"])
         except Exception as e:
-            raise AssistantErr(
-                f"ᴜɴᴀʙʟᴇ ᴛᴏ ᴊᴏɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ ᴄᴀʟʟ.\nRᴇᴀsᴏɴ: {e}"
-            )
+            raise AssistantErr(f"ᴜɴᴀʙʟᴇ ᴛᴏ ᴊᴏɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ ᴄᴀʟʟ.\nRᴇᴀsᴏɴ: {e}")
         self.active_calls.add(chat_id)
         await add_active_chat(chat_id)
         await music_on(chat_id)
@@ -246,17 +316,17 @@ class Call:
                 await set_loop(chat_id, loop)
             await auto_clean(popped)
             if not check:
-                    await _clear_(chat_id)
-                    if chat_id in self.active_calls:
-                        try:
-                            await client.leave_call(chat_id)
-                        except NoActiveGroupCall:
-                            pass
-                        except Exception:
-                            pass
-                        finally:
-                            self.active_calls.discard(chat_id)
-                    return
+                await _clear_(chat_id)
+                if chat_id in self.active_calls:
+                    try:
+                        await client.leave_call(chat_id)
+                    except NoActiveGroupCall:
+                        pass
+                    except Exception:
+                        pass
+                    finally:
+                        self.active_calls.discard(chat_id)
+                return
         except:
             try:
                 await _clear_(chat_id)
@@ -439,7 +509,6 @@ class Call:
                     db[chat_id][0]["mystic"] = run
                     db[chat_id][0]["markup"] = "stream"
 
-
     async def start(self) -> None:
         LOGGER(__name__).info("Starting PyTgCalls Clients...")
         if config.STRING1:
@@ -468,7 +537,9 @@ class Call:
         return str(round(sum(pings) / len(pings), 3)) if pings else "0.0"
 
     async def decorators(self) -> None:
-        assistants = list(filter(None, [self.one, self.two, self.three, self.four, self.five]))
+        assistants = list(
+            filter(None, [self.one, self.two, self.three, self.four, self.five])
+        )
 
         CRITICAL = (
             ChatUpdate.Status.KICKED
@@ -493,8 +564,11 @@ class Call:
 
             except Exception:
                 import sys, traceback
+
                 exc_type, exc_obj, exc_tb = sys.exc_info()
-                full_trace = "".join(traceback.format_exception(exc_type, exc_obj, exc_tb))
+                full_trace = "".join(
+                    traceback.format_exception(exc_type, exc_obj, exc_tb)
+                )
                 caption = (
                     f"🚨 <b>Stream Update Error</b>\n"
                     f"📍 <b>Update Type:</b> <code>{type(update).__name__}</code>\n"
