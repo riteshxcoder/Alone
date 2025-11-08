@@ -9,7 +9,6 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from AloneMusic import app
 from AloneMusic.misc import SUDOERS
 from AloneMusic.utils.database import (
