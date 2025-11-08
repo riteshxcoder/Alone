@@ -7,6 +7,7 @@
 
 ---
 
+
 ## 🚀 Introduction
 **AloneMusic** is a Python-based **music bot/service** that allows users to play, pause, skip, and manage playlists with ease.  
 It’s designed to be lightweight, fast, and customizable.  
