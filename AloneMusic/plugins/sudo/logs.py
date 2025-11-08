@@ -29,7 +29,6 @@ from pyrogram.types import (
 )
 from config import LOGGER_ID as LOG_GROUP_ID
 
-
 async def new_message(chat_id: int, message: str, reply_markup=None):
     await app.send_message(chat_id=chat_id, text=message, reply_markup=reply_markup)
 
