@@ -13,7 +13,6 @@ import random
 import aiohttp
 import aiofiles
 import traceback
-
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 from youtubesearchpython.__future__ import VideosSearch
 
