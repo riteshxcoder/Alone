@@ -68,3 +68,14 @@ python3 -m AloneMusic.bot
 
 # 10. To reattach:
 # screen -r alone
+
+## ❤️ Support
+
+💬 **Telegram:** [AloneMusic](https://t.me/TheTeamHacker)  
+📂 **GitHub Issues:** [Report a Problem](https://github.com/TheAloneTeam/AloneMusic/issues/new)
+
+---
+
+## 📜 License
+
+🧾 This project is licensed under the **GNU GPLv3 License** — see the [LICENSE](../LICENSE) file for details.
