@@ -27,7 +27,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: "Formate By @TheAlonetean"
+          commit-message: "𝚻հҽ 𝚨Łꪮⲛ𝛆 🚩𝗧ε᧘‌ᴍ"
           title: "Format code."
           body: "Automated code formatting."
           labels: ⚫️ black
