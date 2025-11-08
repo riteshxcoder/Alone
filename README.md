@@ -67,7 +67,7 @@ python3 -m AloneMusic.bot
 # Ctrl + A + D
 
 # 10. To reattach:
-# screen -r alone
+# screen -r alone```
 
 ## ❤️ Support
 
