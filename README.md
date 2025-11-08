@@ -31,7 +31,7 @@ It’s designed to be lightweight, fast, and customizable.
 
 ## 📜 License
 
-🧾 This project is licensed under the **GNU GPLv3 License** — see the [LICENSE](../LICENSE) file for details.
+🧾 This project is licensed under the **GNU GPLv3 License** — see the [LICENSE](/LICENSE) file for details.
 
 ---
 
