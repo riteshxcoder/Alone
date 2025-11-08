@@ -52,7 +52,7 @@ Project maintainers are responsible for:
 
 ## ⚠️ Enforcement
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting:
-- **Project Maintainers:** [Open a private issue](../../issues)
+- **Project Maintainers:** [Open a private issue](/issues)
 - or email (if configured) in the repository contact section.
 
 All complaints will be reviewed fairly and kept confidential.
