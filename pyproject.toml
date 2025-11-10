@@ -71,6 +71,7 @@ dependencies = [
     "youtube-search",
     "youtube-search-python",
     "py-yt-search==0.5.1",
+    "spotipy",
 
 
     # Optional AI / Helper
