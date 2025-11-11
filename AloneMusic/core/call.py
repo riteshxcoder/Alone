@@ -65,7 +65,6 @@ def dynamic_media_stream(
         ffmpeg_parameters=ffmpeg_params,
     )
 
-
 async def _clear_(chat_id: int) -> None:
     popped = db.pop(chat_id, None)
     if popped:
