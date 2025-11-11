@@ -45,7 +45,7 @@ counter = {}
 
 
 def dynamic_media_stream(path: str, video: bool = False, ffmpeg_params: str = None) -> MediaStream:
-    """PyTgCalls v2.2.8 compatible stream creator"""
+    """PyTgCalls v2.2.8 compatible dynamic stream"""
     return MediaStream(
         file_path=path,
         audio_quality=AudioQuality.STUDIO,
