@@ -44,20 +44,15 @@ autoend = {}
 counter = {}
 
 
-def dynamic_media_stream(
-    path: str, video: bool = False, ffmpeg_params: str = None
-) -> MediaStream:
+def dynamic_media_stream(path: str, video: bool = False, ffmpeg_params: str = None) -> MediaStream:
+    """PyTgCalls v2.2.8 compatible stream creator"""
     return MediaStream(
-        audio_path=path,
-        media_path=path,
-        audio_parameters=AudioQuality.MEDIUM if video else AudioQuality.STUDIO,
-        video_parameters=VideoQuality.HD_720p if video else VideoQuality.SD_360p,
-        video_flags=(
-            MediaStream.Flags.AUTO_DETECT if video else MediaStream.Flags.IGNORE
-        ),
-        ffmpeg_parameters=ffmpeg_params,
+        file_path=path,
+        audio_quality=AudioQuality.STUDIO,
+        video_quality=VideoQuality.HD_720p if video else None,
+        video=video,
+        additional_ffmpeg_parameters=ffmpeg_params,
     )
-
 
 async def _clear_(chat_id: int) -> None:
     popped = db.pop(chat_id, None)
