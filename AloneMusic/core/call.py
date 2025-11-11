@@ -50,8 +50,8 @@ def dynamic_media_stream(path: str, video: bool = False, ffmpeg_params: str = No
         file_path=path,
         audio_quality=AudioQuality.STUDIO,
         video_quality=VideoQuality.HD_720p if video else None,
-        video=video,
-        additional_ffmpeg_parameters=ffmpeg_params,
+        is_video=video,
+        ffmpeg_parameters=ffmpeg_params,
     )
 
 async def _clear_(chat_id: int) -> None:
