@@ -1,126 +1,88 @@
 #!/bin/bash
+# ===============================================
+# AloneMusic Auto Installer Script (VPS / Ubuntu)
+# Repository: TheAloneTeam/AloneMusic
+# ===============================================
 
-pprint (){
-	cred='\033[0;31m'
-	cgreen='\033[0;32m'
-	cyellow='\033[0;33m'
-	cblue='\033[0;34m'
-	cpurple='\033[0;35m'
-	eval "export color='$cpurple'"
-	[ ! -z $2 ] && eval "export color=\"\$$2\""
-    printf "$color $1"
+# Color definitions
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[1;33m'
+blue='\033[0;34m'
+purple='\033[0;35m'
+reset='\033[0m'
+
+pprint(){
+  printf "${2:-$purple}%b${reset}" "$1"
 }
 
-color_reset(){ printf '\033[0;37m';}
+color_reset(){ printf "${reset}"; }
 
 yesnoprompt(){
-	old_stty_cfg=$(stty -g)
-	stty raw -echo ; answer=$(head -c 1)
-	stty $old_stty_cfg
-	echo "$answer" | grep -iq "^y"
+  old_stty_cfg=$(stty -g)
+  stty raw -echo ; answer=$(head -c 1)
+  stty $old_stty_cfg
+  echo "$answer" | grep -iq "^y"
 }
 
-update() {
-	pprint "\n\nUpdating package list.. "
-	sudo apt update 2>&1 | grep "can be upgraded" &>/dev/null
-	if [ $? -eq 0 ]; then
-		pprint "UPDATE AVAILABLE" "cgreen"
-		pprint "\n\nDo you want to automatically upgrade (y/n)?"
-		if yesnoprompt; then
-			pprint "\n\nUpgrading packages.. "
-			sudo apt upgrade -y &>/dev/null &&
-			pprint "DONE!\n\n" "cgreen" || (pprint "FAIL.\n\n" "cred"; exit 1)
-		else
-			echo
-		fi
-	else
-		pprint "ALREADY UP TO DATE\n\n" "cgreen"
-	fi
+# ===============================================
+update_system(){
+  pprint "\n\nUpdating system packages... " "$blue"
+  sudo apt update -y && sudo apt upgrade -y \
+    && pprint "DONE\n" "$green" || { pprint "FAIL\n" "$red"; exit 1; }
 }
 
-packages(){
-	if ! command -v pip &>/dev/null; then
-		pprint "Couldn't found pip, installing now..."
-		sudo apt install python3-pip -y 2>pypilog.txt 1>/dev/null &&
-		pprint "SUCCESS.\n\n" "cgreen" || (pprint "FAIL.\n\n" "cred"; exit 1)
-	fi
-
-	if ! command -v ffmpeg &>/dev/null; then
-		pprint "Couldn't found ffmpeg, installing now..."
-		if sudo apt install ffmpeg -y &>/dev/null;then
-			pprint "SUCCESS.\n\n" "cgreen"
-		else
-			pprint "FAIL.\n\n" "cred"
-			pprint "You need to install ffmpeg manually in order to deploy AloneMusic, exiting...\n" "cblue"
-			exit 1
-		fi
-	fi
-
-	# Check ffmpeg version and warn user if necessary.
-	fv=$(grep -Po 'version (3.*?) ' <<< $(ffmpeg -version)) &&
-	pprint "Playing live streams not going to work since you have ffmpeg $fv, live streams are supported by version 4+.\n" "cblue"
+install_dependencies(){
+  pprint "\nInstalling required system packages...\n" "$yellow"
+  sudo apt install -y python3 python3-pip git ffmpeg libffi-dev libopus0 \
+    && pprint "System packages installed.\n" "$green" \
+    || { pprint "Failed installing system packages.\n" "$red"; exit 1; }
 }
 
-
-node(){
-	command -v npm &>/dev/null && return
-	pprint "Installing Nodejs and Npm..  "
-	curl -fssL https://deb.nodesource.com/setup_19.x | sudo -E bash - &>nodelog.txt &&
-	sudo apt install -y nodejs &>>nodelog.txt &&
-	sudo npm i -g npm &>>nodelog.txt &&
-	pprint "SUCCESS!\n" "cgreen" || (pprint "FAIL.\n" "cred"; exit 1)
+clone_repo(){
+  pprint "\nCloning the repository...\n" "$yellow"
+  if [ ! -d "AloneMusic" ]; then
+    git clone https://github.com/TheAloneTeam/AloneMusic.git \
+      && pprint "Repository cloned.\n" "$green" \
+      || { pprint "Failed to clone repository.\n" "$red"; exit 1; }
+  else
+    pprint "Repository folder already exists, pulling latest...\n" "$yellow"
+    cd AloneMusic && git pull && cd .. \
+      && pprint "Updated repository.\n" "$green" \
+      || { pprint "Failed to update repository.\n" "$red"; exit 1; }
+  fi
 }
 
-
-installation(){
-	pprint "\n\nUpgrading pip and installing dependency packages..."
-	pip3 install -U pip &>>pypilog.txt &&
-	pip3 install -U -r requirements.txt &>>pypilog.txt &&
-	pprint "DONE.\n" "cgreen" && return
-	pprint "FAIL.\n" "cred"
-	exit 1
+install_python_packages(){
+  pprint "\nInstalling Python dependencies...\n" "$yellow"
+  cd AloneMusic \
+    && python3 -m pip install --upgrade pip setuptools wheel \
+    && python3 -m pip install . \
+    && pprint "Python dependencies installed.\n" "$green" \
+    || { pprint "Python dependencies installation failed. Check logs.\n" "$red"; exit 1; }
 }
 
+setup_env(){
+  pprint "\nSetting up environment variables (.env)\n" "$blue"
+
+  cp AloneMusic/sample.env AloneMusic/.env
+  pprint "Please edit the .env file and fill in your values (BOT_TOKEN, API_ID, API_HASH, MONGO_DB_URI, etc.)\n" "$yellow"
+  pprint "Press ENTER when you’re ready to continue…" "$purple"
+  read
+
+  cd AloneMusic
+  pprint "\nStarting the bot now...\n\n" "$green"
+  python3 -m AloneMusic.bot
+}
+
+# ===============================================
+# Main execution
 clear
-pprint "Welcome to AloneMusic Setup Installer\n\n"
-pprint "If you see any error during Installation Process, Please refer to these files for logs: "
-pprint "\nFor node js errors , Checkout nodelog.txt"
-pprint "\nFor pypi packages errors , Checkout pypilog.txt"
+pprint "Welcome to AloneMusic VPS Installer 🚀\n" "$purple"
 sleep 1
-pprint "\n\nScript needs sudo privileges in order to update & install packages.\n"
-sudo test
 
-update
-packages
-node
-installation
-pprint "\n\n\n\n\nAloneMusic Installation Completed !" "cgreen"
-sleep 1
-clear
-
-pprint "\nEnter Your Values Below\n\n\n"
-pprint "API ID: "; color_reset; read api_id
-pprint "\nAPI HASH: "; color_reset; read api_hash
-pprint "\nBOT TOKEN: "; color_reset; read bot_token
-pprint "\nOWNER ID:"; color_reset; read ownid
-pprint "\nMONGO DB URI: "; color_reset; read mongo_db
-pprint "\nLOG GROUP ID: "; color_reset; read logger
-pprint "\nSTRING SESSION: "; color_reset; read string_session
-
-pprint "\n\nProcessing your vars, wait a while !" "cgreen"
-
-if [ -f .env ]; then
-	rm .env
-fi
-
-echo """API_ID = $api_id
-API_HASH = $api_hash
-BOT_TOKEN = $bot_token
-MONGO_DB_URI = $mongo_db
-LOGGER_ID = $logger
-STRING_SESSION = $string_session
-OWNER_ID = $ownid""" > .env
-clear
-
-pprint "\n\n\nThanks for using AloneMusic installer, your vars have been saved successfully ! \nIf you wanna add more variables add them in your env by : vi .env"
-pprint "\n\nNow you can start the bot by : bash start\n\n"
+update_system
+install_dependencies
+clone_repo
+install_python_packages
+setup_env
