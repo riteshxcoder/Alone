@@ -12,7 +12,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineQueryResultPhoto,
 )
-from youtubesearchpython.__future__ import VideosSearch
+from py_yt import VideosSearch
 
 from AloneMusic import app
 from AloneMusic.utils.inlinequery import answer
