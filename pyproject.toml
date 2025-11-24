@@ -55,6 +55,7 @@ dependencies = [
     "spotipy",
 ]
 
+
 [tool.setuptools.packages.find]
 include = ["AloneMusic", "core", "config", "strings"]
 
