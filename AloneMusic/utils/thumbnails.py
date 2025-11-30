@@ -22,6 +22,7 @@ from PIL import (
 from py_yt import VideosSearch
 from config import YOUTUBE_IMG_URL
 
+
 def changeImageSize(maxWidth, maxHeight, image):
     widthRatio = maxWidth / image.size[0]
     heightRatio = maxHeight / image.size[1]
@@ -29,6 +30,7 @@ def changeImageSize(maxWidth, maxHeight, image):
     newHeight = int(heightRatio * image.size[1])
     newImage = image.resize((newWidth, newHeight))
     return newImage
+
 
 async def get_thumb(videoid):
     if os.path.isfile(f"cache/{videoid}.png"):
@@ -62,23 +64,23 @@ async def get_thumb(videoid):
                     await f.close()
 
         youtube = Image.open(f"cache/thumb{videoid}.png")
-        
 
-        GLOW_COLOR = "#ff0099"   # Neon Pink
-        BORDER_COLOR = "#FF1493" # Deep Pink
+        GLOW_COLOR = "#ff0099"  # Neon Pink
+        BORDER_COLOR = "#FF1493"  # Deep Pink
         image1 = changeImageSize(1280, 720, youtube)
         image1 = image1.filter(ImageFilter.GaussianBlur(20))
-        image1 = ImageEnhance.Brightness(image1).enhance(0.4) 
+        image1 = ImageEnhance.Brightness(image1).enhance(0.4)
 
+        thumb_width = 840
+        thumb_height = 460
 
-        thumb_width = 840  
-        thumb_height = 460 
-        
         youtube_thumb = youtube.resize((thumb_width, thumb_height))
-        
+
         mask = Image.new("L", (thumb_width, thumb_height), 0)
         draw_mask = ImageDraw.Draw(mask)
-        draw_mask.rounded_rectangle([(0, 0), (thumb_width, thumb_height)], radius=20, fill=255)
+        draw_mask.rounded_rectangle(
+            [(0, 0), (thumb_width, thumb_height)], radius=20, fill=255
+        )
         youtube_thumb.putalpha(mask)
         center_x = 640
         center_y_img = 300
@@ -89,34 +91,36 @@ async def get_thumb(videoid):
 
         glow_layer = Image.new("RGBA", (1280, 720), (0, 0, 0, 0))
         draw_glow = ImageDraw.Draw(glow_layer)
-        
+
         glow_expand = 20
         draw_glow.rounded_rectangle(
-            [(thumb_x - glow_expand, thumb_y - glow_expand), 
-             (thumb_x2 + glow_expand, thumb_y2 + glow_expand)],
+            [
+                (thumb_x - glow_expand, thumb_y - glow_expand),
+                (thumb_x2 + glow_expand, thumb_y2 + glow_expand),
+            ],
             radius=30,
-            fill=GLOW_COLOR
+            fill=GLOW_COLOR,
         )
         glow_layer = glow_layer.filter(ImageFilter.GaussianBlur(30))
         image1.paste(glow_layer, (0, 0), glow_layer)
         border_layer = Image.new("RGBA", (1280, 720), (0, 0, 0, 0))
         draw_border = ImageDraw.Draw(border_layer)
-        
+
         border_expand = 5
         draw_border.rounded_rectangle(
-            [(thumb_x - border_expand, thumb_y - border_expand), 
-             (thumb_x2 + border_expand, thumb_y2 + border_expand)],
+            [
+                (thumb_x - border_expand, thumb_y - border_expand),
+                (thumb_x2 + border_expand, thumb_y2 + border_expand),
+            ],
             radius=25,
-            fill=BORDER_COLOR
+            fill=BORDER_COLOR,
         )
         image1.paste(border_layer, (0, 0), border_layer)
 
-
         image1.paste(youtube_thumb, (thumb_x, thumb_y), youtube_thumb)
 
-
         draw = ImageDraw.Draw(image1)
-        
+
         try:
             font_title = ImageFont.truetype("AloneMusic/assets/font.ttf", 45)
             font_details = ImageFont.truetype("AloneMusic/assets/font2.ttf", 30)
@@ -127,26 +131,24 @@ async def get_thumb(videoid):
             font_watermark = ImageFont.truetype("arial.ttf", 25)
 
         def get_text_width(text, font):
-            if hasattr(draw, 'textlength'):
+            if hasattr(draw, "textlength"):
                 return draw.textlength(text, font=font)
             else:
                 return draw.textsize(text, font=font)[0]
 
-
         if len(title) > 45:
             title = title[:45] + "..."
 
-
         w_title = get_text_width(title, font_title)
         text_y_pos = thumb_y2 + 50
-        
+
         draw.text(
             ((1280 - w_title) / 2, text_y_pos),
             text=title,
             fill="white",
             font=font_title,
             stroke_width=1,
-            stroke_fill="black"
+            stroke_fill="black",
         )
 
         stats_text = f"YouTube : {views} | Time : {duration} | Player : @aashikmusicbot"
@@ -157,35 +159,35 @@ async def get_thumb(videoid):
             fill=BORDER_COLOR,
             font=font_details,
             stroke_width=1,
-            stroke_fill="black"
+            stroke_fill="black",
         )
-        
+
         text_classy = "AloneMusic"
         w_classy = get_text_width(text_classy, font_watermark)
-        
+
         draw.text(
             (1280 - w_classy - 30, 30),
             text=text_classy,
-            fill="yellow", 
+            fill="yellow",
             font=font_watermark,
             stroke_width=1,
-            stroke_fill="black"
+            stroke_fill="black",
         )
 
         draw.text(
-            (30, 680), 
+            (30, 680),
             text="AloneMusic",
             fill="white",
             font=font_watermark,
             stroke_width=1,
-            stroke_fill="black"
+            stroke_fill="black",
         )
 
         try:
             os.remove(f"cache/thumb{videoid}.png")
         except:
             pass
-            
+
         file_name = f"cache/{videoid}.png"
         image1.save(file_name)
         return file_name
@@ -193,6 +195,7 @@ async def get_thumb(videoid):
     except Exception as e:
         print(e)
         return YOUTUBE_IMG_URL
+
 
 async def get_qthumb(vidid):
     try:
@@ -204,4 +207,3 @@ async def get_qthumb(vidid):
     except Exception as e:
         print(e)
         return YOUTUBE_IMG_URL
-        
