@@ -12,6 +12,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 from py_yt import VideosSearch
 
+
 class AppleAPI:
     def __init__(self):
         self.regex = r"^(https:\/\/music.apple.com\/)(.*)$"
