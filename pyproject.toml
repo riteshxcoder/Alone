@@ -46,7 +46,6 @@ dependencies = [
     "pyyaml",
     "requests",
     "speedtest-cli",
-    "tgcrypto==1.2.5",
     "unidecode",
     "yt-dlp",
     "youtube-search",
