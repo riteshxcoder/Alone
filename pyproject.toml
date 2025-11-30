@@ -35,7 +35,7 @@ dependencies = [
     "heroku3",
     "humanize",
     "motor",
-    "Pillow==10.3.0",
+    "Pillow",
     "psutil",
     "httpx",
     "ntgcalls==2.0.6",
