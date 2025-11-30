@@ -9,6 +9,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from config import MONGO_DB_URI
+from ..config import *
 
 from ..logging import LOGGER
 
