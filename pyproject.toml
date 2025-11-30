@@ -57,7 +57,7 @@ dependencies = [
 
 
 [tool.setuptools.packages.find]
-include = ["AloneMusic", "core"]
+include = ["AloneMusic", "config", "strings"]
 
 [project.urls]
 Repository = "https://github.com/TheAloneTeam/AloneMusic"
