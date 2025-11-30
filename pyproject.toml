@@ -1,63 +1,86 @@
 [build-system]
-requires = ["setuptools==80.9.0"]
+requires = ["setuptools>=70.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "AloneMusic"
 version = "0.1.0"
-description = "🎵 Telegram Music Bot by TheAloneTeam"
+description = "🎵 Advanced Telegram Music Bot by TheAloneTeam — PyroFork + ntgcalls + YouTube + Spotify"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
-license-files = ["LICENSE"]
+license = { text = "MIT" }
 authors = [
-  { name = "TheAloneTeam", email = "riteshcoderx@gmail.com" }
+  { name = "TheAloneTeam", email = "thealoneteam@github.com" }
 ]
-keywords = ["telegram", "music", "bot", "pyrogram", "pytgcalls"]
+keywords = ["telegram", "music", "bot", "pyrogram", "pyrofork", "pytgcalls", "youtube", "spotify"]
 classifiers = [
   "Environment :: Console",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Topic :: Internet",
   "Topic :: Utilities",
 ]
 
+# ───────────────────────────────
+# 🔧 CORE DEPENDENCIES
+# ───────────────────────────────
 dependencies = [
+    # Async & Web
     "aiofiles",
-    "aiohttp",
+    "aiohttp>=3.9.5",
     "apscheduler",
     "beautifulsoup4",
     "dnspython",
-    "ffmpeg-python",
     "gitpython",
     "hachoir",
-    "heroku3",
-    "humanize",
-    "motor",
-    "Pillow",
-    "psutil",
     "httpx",
-    "ntgcalls==2.0.6",
-    "py-tgcalls==2.2.8",
-    #"pykeyboard2==0.1.6",
-    "pyrofork",
+    "humanize",
+    "requests",
     "python-dotenv",
     "pyyaml",
-    "requests",
-    "speedtest-cli",
     "unidecode",
+
+    # Telegram
+    "tgcrypto",
+    "pyrofork>=2.3.45",
+    "pykeyboard",
+
+    # Voice / Music Framework
+    "ffmpeg-python",
+    "ntgcalls==2.0.6",
+    "py-tgcalls==2.2.8",
+
+    # Database / Utility
+    "motor>=3.4.0",
+    "psutil",
+    "heroku3",
+
+    # Image / Media
+    "Pillow==9.5.0",
+
+    # Speedtest & Tools
+    "speedtest-cli",
+
+    # Music & Streaming
     "yt-dlp",
     "youtube-search",
     "youtube-search-python",
-    "py-yt-search==0.5.3",
+    "py-yt-search==0.5.2",
     "spotipy",
-    #"TgCrypto==1.2.5",
+
+
+    # Optional AI / Helper
+    "openai>=1.40.0",
+    "prettytable",
 ]
 
-
 [tool.setuptools.packages.find]
-include = ["AloneMusic", "config", "strings"]
+include = ["AloneMusic", "core", "config", "strings"]
 
 [project.urls]
 Repository = "https://github.com/TheAloneTeam/AloneMusic"
