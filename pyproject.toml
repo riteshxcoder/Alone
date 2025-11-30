@@ -40,7 +40,7 @@ dependencies = [
     "httpx",
     "ntgcalls==2.0.6",
     "py-tgcalls==2.2.8",
-    "pykeyboard",
+    #"pykeyboard",
     "pyrofork",
     "python-dotenv",
     "pyyaml",
@@ -52,7 +52,7 @@ dependencies = [
     "youtube-search-python",
     "py-yt-search==0.5.3",
     "spotipy",
-    "tgcrypto",
+    #"tgcrypto",
 ]
 
 
