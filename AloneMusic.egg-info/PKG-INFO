@@ -1,0 +1,129 @@
+Metadata-Version: 2.4
+Name: AloneMusic
+Version: 0.1.0
+Summary: 🎵 Telegram Music Bot by TheAloneTeam
+Author-email: TheAloneTeam <riteshcoderx@gmail.com>
+License-Expression: MIT
+Project-URL: Repository, https://github.com/TheAloneTeam/AloneMusic
+Project-URL: Issues, https://github.com/TheAloneTeam/AloneMusic/issues
+Project-URL: Changelog, https://github.com/TheAloneTeam/AloneMusic/blob/master/CHANGELOG.md
+Keywords: telegram,music,bot,pyrogram,pytgcalls
+Classifier: Environment :: Console
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Utilities
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: aiofiles
+Requires-Dist: aiohttp
+Requires-Dist: apscheduler
+Requires-Dist: beautifulsoup4
+Requires-Dist: dnspython
+Requires-Dist: ffmpeg-python
+Requires-Dist: gitpython
+Requires-Dist: hachoir
+Requires-Dist: heroku3
+Requires-Dist: humanize
+Requires-Dist: motor
+Requires-Dist: Pillow
+Requires-Dist: psutil
+Requires-Dist: httpx
+Requires-Dist: ntgcalls==2.0.6
+Requires-Dist: py-tgcalls==2.2.8
+Requires-Dist: pyrofork
+Requires-Dist: python-dotenv
+Requires-Dist: pyyaml
+Requires-Dist: requests
+Requires-Dist: speedtest-cli
+Requires-Dist: unidecode
+Requires-Dist: yt-dlp
+Requires-Dist: youtube-search
+Requires-Dist: youtube-search-python
+Requires-Dist: py-yt-search==0.5.3
+Requires-Dist: spotipy
+Dynamic: license-file
+
+# 🎵 AloneMusic
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Stars](https://img.shields.io/github/stars/TheAloneTeam/AloneMusic?style=social)](https://github.com/TheAloneTeam/AloneMusic/stargazers)
+[![Forks](https://img.shields.io/github/forks/TheAloneTeam/AloneMusic?style=social)](https://github.com/TheAloneTeam/AloneMusic/network/members)
+
+---
+
+
+## 🚀 Introduction
+**AloneMusic** is a Python-based **music bot/service** that allows users to play, pause, skip, and manage playlists with ease.  
+It’s designed to be lightweight, fast, and customizable.  
+
+---
+
+## ✨ Features
+- 🎶 Play / Pause / Skip / Stop songs  
+- 📂 Playlist management (add/remove/list)  
+- 🔗 Play via song name or URL  
+- ⚡ Fast and smooth performance  
+- ⚙️ Easy configuration with `.env` file  
+- 🐳 Docker & Heroku deployment support  
+
+---
+## ❤️ Support
+
+💬 **Telegram:** [AloneMusic](https://t.me/TheTeamHacker)  
+📂 **GitHub Issues:** [Report a Problem](https://github.com/TheAloneTeam/AloneMusic/issues/new)
+
+---
+
+## 📜 License
+
+🧾 This project is licensed under the **GNU GPLv3 License** — see the [LICENSE](/LICENSE) file for details.
+
+---
+
+## 🚀 Deployment Methods
+
+### 🔹 1. Deploy on **Heroku** (One Click)
+Click this button to deploy instantly on **Heroku**:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TheAloneTeam/AloneMusic)
+
+Or deploy manually:
+```bash
+
+
+# 1. Update system
+sudo apt update && sudo apt upgrade -y
+
+# 2. Install system dependencies
+sudo apt install python3 python3-pip git ffmpeg screen -y
+
+# 3. Clone the repository
+git clone https://github.com/TheAloneTeam/AloneMusic.git
+cd AloneMusic
+
+# 4. Install build backend (in case it's missing)
+pip install build setuptools wheel
+
+# 5. Install project dependencies using pyproject.toml
+# (This automatically reads dependencies from pyproject.toml)
+pip install .
+
+# 6. Setup environment variables
+cp sample.env .env
+nano .env    # Fill BOT_TOKEN, API_ID, API_HASH, etc.
+
+# 7. (Optional) Run bot in a screen session so it keeps running
+screen -S alone
+
+# 8. Run the bot
+python3 -m AloneMusic.bot
+
+# 9. To detach from screen safely:
+# Ctrl + A + D
+
+# 10. To reattach:
+# screen -r alone
