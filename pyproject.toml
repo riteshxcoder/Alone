@@ -70,13 +70,13 @@ dependencies = [
     "yt-dlp",
     "youtube-search",
     "youtube-search-python",
-    "py-yt-search==0.5.2,
+    "py-yt-search==0.5.2",
     "spotipy",
 
 
     # Optional AI / Helper
     "openai>=1.40.0",
-    "prettytable"
+    "prettytable",
 ]
 
 [tool.setuptools.packages.find]
