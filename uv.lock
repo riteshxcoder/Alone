@@ -1,1 +1,68 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
 
+[project]
+name = "AloneMusic"
+version = "0.1.0"
+description = "🎵 Telegram Music Bot by TheAloneTeam"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "TheAloneTeam", email = "riteshcoderx@gmail.com" }
+]
+keywords = ["telegram", "music", "bot", "pyrogram", "pytgcalls"]
+classifiers = [
+  "Environment :: Console",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Utilities",
+]
+
+dependencies = [
+    "aiofiles",
+    "aiohttp",
+    "apscheduler",
+    "beautifulsoup4",
+    "dnspython",
+    "ffmpeg-python",
+    "gitpython",
+    "hachoir",
+    "heroku3",
+    "humanize",
+    "motor",
+    "Pillow==9.5.0",
+    "psutil",
+    "httpx",
+    "ntgcalls==2.0.6",
+    "py-tgcalls==2.2.8",
+    "pykeyboard",
+    "pyrofork",
+    "python-dotenv",
+    "pyyaml",
+    "requests",
+    "speedtest-cli",
+    "tgcrypto",
+    "unidecode",
+    "yt-dlp",
+    "youtube-search",
+    "youtube-search-python",
+    "py-yt-search==0.5.3",
+    "spotipy",
+]
+
+
+[tool.setuptools.packages.find]
+include = ["AloneMusic", "core", "config", "strings"]
+
+[project.urls]
+Repository = "https://github.com/TheAloneTeam/AloneMusic"
+Issues = "https://github.com/TheAloneTeam/AloneMusic/issues"
+Changelog = "https://github.com/TheAloneTeam/AloneMusic/blob/master/CHANGELOG.md"
+
+[project.scripts]
+alonemusic = "AloneMusic.__main__:main"
