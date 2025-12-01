@@ -26,11 +26,7 @@ classifiers = [
   "Topic :: Utilities",
 ]
 
-# ───────────────────────────────
-# 🔧 CORE DEPENDENCIES
-# ───────────────────────────────
 dependencies = [
-    # Async & Web
     "aiofiles",
     "aiohttp>=3.9.5",
     "apscheduler",
@@ -44,37 +40,22 @@ dependencies = [
     "python-dotenv",
     "pyyaml",
     "unidecode",
-
-    # Telegram
     "tgcrypto",
     "pyrofork>=2.3.45",
     "pykeyboard",
-
-    # Voice / Music Framework
     "ffmpeg-python",
     "ntgcalls==2.0.6",
     "py-tgcalls==2.2.8",
-
-    # Database / Utility
     "motor>=3.4.0",
     "psutil",
     "heroku3",
-
-    # Image / Media
     "Pillow==9.5.0",
-
-    # Speedtest & Tools
     "speedtest-cli",
-
-    # Music & Streaming
     "yt-dlp",
     "youtube-search",
     "youtube-search-python",
     "py-yt-search==0.5.3",
     "spotipy",
-
-
-    # Optional AI / Helper
     "openai>=1.40.0",
     "prettytable",
 ]
