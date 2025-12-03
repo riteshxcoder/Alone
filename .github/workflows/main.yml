@@ -1,6 +1,7 @@
 name: Black
 
-on: push
+on:
+  push:
 
 permissions:
   contents: write
@@ -9,8 +10,9 @@ permissions:
 jobs:
   black:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
@@ -25,7 +27,7 @@ jobs:
         run: black .
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "𝚻հҽ 𝚨Łꪮⲛ𝛆 🚩𝗧ε᧘‌ᴍ"
           title: "Format code"
@@ -33,6 +35,6 @@ jobs:
           labels: "black"
           branch: autofix
           delete-branch: true
-          committer: TheAloneTeam <TheAloneTeam@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: true
+          committer: "TheAloneTeam <shivangmishrax@gmail.com>"
+          author: "TheAloneTeam <shivangmishrax@gmail.com>"
+          signoff: false
