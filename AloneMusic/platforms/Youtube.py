@@ -27,7 +27,8 @@ from urllib.parse import quote_plus
 API_URL = "https://kartik.opusx.workers.dev/yt"
 DOWNLOAD_FOLDER = "downloads"
 CHUNK_SIZE = 8192  # don't chnge this value
-RETRIES = 6 # you may increase if error arises for some yt videos 
+RETRIES = 6  # you may increase if error arises for some yt videos
+
 
 def cookie_txt_file():
     cookie_dir = f"{os.getcwd()}/cookies"
@@ -39,7 +40,13 @@ def cookie_txt_file():
     cookie_file = os.path.join(cookie_dir, random.choice(cookies_files))
     return cookie_file
 
-async def _fetch_json_aio(session: aiohttp.ClientSession, url: str, retries: int = RETRIES, timeout: float = 30.0):
+
+async def _fetch_json_aio(
+    session: aiohttp.ClientSession,
+    url: str,
+    retries: int = RETRIES,
+    timeout: float = 30.0,
+):
     backoff = 1
     for attempt in range(retries):
         try:
@@ -55,7 +62,10 @@ async def _fetch_json_aio(session: aiohttp.ClientSession, url: str, retries: int
             backoff = min(backoff * 2, 16)
     return None
 
-async def _download_stream_aio(session: aiohttp.ClientSession, url: str, dest_path: str, retries: int = RETRIES):
+
+async def _download_stream_aio(
+    session: aiohttp.ClientSession, url: str, dest_path: str, retries: int = RETRIES
+):
     backoff = 1
     for attempt in range(retries):
         try:
@@ -77,8 +87,9 @@ async def _download_stream_aio(session: aiohttp.ClientSession, url: str, dest_pa
             else:
                 return False
 
+
 async def download_song(link: str):
-    video_id = link.split('v=')[-1].split('&')[0]
+    video_id = link.split("v=")[-1].split("&")[0]
     for ext in ["mp3", "m4a", "webm"]:
         file_path = f"{DOWNLOAD_FOLDER}/{video_id}.{ext}"
         if os.path.exists(file_path):
@@ -103,8 +114,9 @@ async def download_song(link: str):
         ok = await _download_stream_aio(session, download_url, file_path)
         return file_path if ok else None
 
+
 async def download_video(link: str):
-    video_id = link.split('v=')[-1].split('&')[0]
+    video_id = link.split("v=")[-1].split("&")[0]
     for ext in ["mp4", "webm", "mkv"]:
         file_path = f"{DOWNLOAD_FOLDER}/{video_id}.{ext}"
         if os.path.exists(file_path):
@@ -127,6 +139,7 @@ async def download_video(link: str):
         ok = await _download_stream_aio(session, download_url, file_path)
         return file_path if ok else None
 
+
 async def check_file_size(link):
     async def get_format_info(link):
         cookie_file = cookie_txt_file()
@@ -134,30 +147,34 @@ async def check_file_size(link):
             return None
         proc = await asyncio.create_subprocess_exec(
             "yt-dlp",
-            "--cookies", cookie_file,
+            "--cookies",
+            cookie_file,
             "-J",
             link,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await proc.communicate()
         if proc.returncode != 0:
             return None
         return json.loads(stdout.decode())
+
     def parse_size(formats):
         total_size = 0
         for format in formats:
-            if 'filesize' in format and format['filesize']:
-                total_size += format['filesize']
+            if "filesize" in format and format["filesize"]:
+                total_size += format["filesize"]
         return total_size
+
     info = await get_format_info(link)
     if info is None:
         return None
-    formats = info.get('formats', [])
+    formats = info.get("formats", [])
     if not formats:
         return None
     total_size = parse_size(formats)
     return total_size
+
 
 async def shell_cmd(cmd):
     proc = await asyncio.create_subprocess_shell(
@@ -172,8 +189,8 @@ async def shell_cmd(cmd):
         else:
             return errorz.decode("utf-8")
     return out.decode("utf-8")
-    
-    
+
+
 class YouTubeAPI:
     def __init__(self):
         self.base = "https://www.youtube.com/watch?v="
@@ -277,7 +294,8 @@ class YouTubeAPI:
             return 0, "No cookies found. Cannot download video."
         proc = await asyncio.create_subprocess_exec(
             "yt-dlp",
-            "--cookies", cookie_file,
+            "--cookies",
+            cookie_file,
             "-g",
             "-f",
             "best[height<=?720][width<=?1280]",
@@ -405,6 +423,7 @@ class YouTubeAPI:
         if videoid:
             link = self.base + link
         loop = asyncio.get_running_loop()
+
         def audio_dl():
             cookie_file = cookie_txt_file()
             if not cookie_file:
@@ -415,7 +434,7 @@ class YouTubeAPI:
                 "geo_bypass": True,
                 "nocheckcertificate": True,
                 "quiet": True,
-                "cookiefile" : cookie_file,
+                "cookiefile": cookie_file,
                 "no_warnings": True,
             }
             x = yt_dlp.YoutubeDL(ydl_optssx)
@@ -436,7 +455,7 @@ class YouTubeAPI:
                 "geo_bypass": True,
                 "nocheckcertificate": True,
                 "quiet": True,
-                "cookiefile" : cookie_file,
+                "cookiefile": cookie_file,
                 "no_warnings": True,
             }
             x = yt_dlp.YoutubeDL(ydl_optssx)
@@ -460,7 +479,7 @@ class YouTubeAPI:
                 "nocheckcertificate": True,
                 "quiet": True,
                 "no_warnings": True,
-                "cookiefile" : cookie_file,
+                "cookiefile": cookie_file,
                 "prefer_ffmpeg": True,
                 "merge_output_format": "mp4",
             }
@@ -479,7 +498,7 @@ class YouTubeAPI:
                 "nocheckcertificate": True,
                 "quiet": True,
                 "no_warnings": True,
-                "cookiefile" : cookie_file,
+                "cookiefile": cookie_file,
                 "prefer_ffmpeg": True,
                 "postprocessors": [
                     {
@@ -517,7 +536,8 @@ class YouTubeAPI:
             else:
                 proc = await asyncio.create_subprocess_exec(
                     "yt-dlp",
-                    "--cookies", cookie_file,
+                    "--cookies",
+                    cookie_file,
                     "-g",
                     "-f",
                     "best[height<=?720][width<=?1280]",
@@ -530,15 +550,15 @@ class YouTubeAPI:
                     downloaded_file = stdout.decode().split("\n")[0]
                     direct = False
                 else:
-                   file_size = await check_file_size(link)
-                   if not file_size:
-                     return None, None
-                   total_size_mb = file_size / (1024 * 1024)
-                   if total_size_mb > 250:
-                     return None, None
-                   direct = True
-                   downloaded_file = await loop.run_in_executor(None, video_dl)
+                    file_size = await check_file_size(link)
+                    if not file_size:
+                        return None, None
+                    total_size_mb = file_size / (1024 * 1024)
+                    if total_size_mb > 250:
+                        return None, None
+                    direct = True
+                    downloaded_file = await loop.run_in_executor(None, video_dl)
         else:
             direct = True
             downloaded_file = await download_song(link)
-        return downloaded_file, direct                      
+        return downloaded_file, direct
