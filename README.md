@@ -44,38 +44,40 @@ Click this button to deploy instantly on **Heroku**:
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TheAloneTeam/AloneMusic)
 
 Or deploy manually:
-```bash
+```#!/bin/bash
 
+echo "🚀 AloneMusic VPS Deployment Starting..."
 
-# 1. Update system
+# 1. System update
 sudo apt update && sudo apt upgrade -y
 
-# 2. Install system dependencies
-sudo apt install python3 python3-pip git ffmpeg screen -y
+# 2. Install required packages
+sudo apt install -y ffmpeg git python3-pip tmux nano
 
-# 3. Clone the repository
-git clone https://github.com/TheAloneTeam/AloneMusic.git
+# 3. Install essential Python packages manually
+pip3 install --upgrade pip
+pip3 install pyrogram tgcrypto pytgcalls uvloop aiohttp
+
+# 4. Clone the repo
+if [ -d "AloneMusic" ]; then
+    rm -rf AloneMusic
+fi
+git clone https://github.com/TheAloneTeam/AloneMusic
 cd AloneMusic
 
-# 4. Install build backend (in case it's missing)
-pip install build setuptools wheel
+# 5. Copy sample.env to .env
+if [ -f "sample.env" ]; then
+    cp sample.env .env
+    echo "⚠️  Edit .env file to add your BOT_TOKEN, API_ID, API_HASH, STRING_SESSION, MONGO_DB etc."
+    sleep 2
+    nano .env
+else
+    echo "❌ sample.env not found! Create .env manually."
+fi
 
-# 5. Install project dependencies using pyproject.toml
-# (This automatically reads dependencies from pyproject.toml)
-pip install .
+# 6. Start bot in tmux
+tmux new-session -d -s alone "python3 -m AloneMusic"
 
-# 6. Setup environment variables
-cp sample.env .env
-nano .env    # Fill BOT_TOKEN, API_ID, API_HASH, etc.
-
-# 7. (Optional) Run bot in a screen session so it keeps running
-screen -S alone
-
-# 8. Run the bot
-python3 -m AloneMusic.bot
-
-# 9. To detach from screen safely:
-# Ctrl + A + D
-
-# 10. To reattach:
-# screen -r alone
+echo "✅ AloneMusic Bot Deployed!"
+echo "➡ Bot running inside tmux session: alone"
+echo "➡ To view logs: tmux attach -t alone"
