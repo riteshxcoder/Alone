@@ -25,17 +25,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install black uv
 
-      # ✅ Run black formatter
+      # Run black formatter
       - name: Run black
         run: black .
 
-      # ✅ Auto-generate uv.lock
+      # Auto-generate uv.lock
       - name: Generate uv.lock
         run: |
           uv sync --refresh
           uv lock
 
-      # ✅ Create PR with changes
+      # Create PR with all changes
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
@@ -43,13 +43,13 @@ jobs:
           commit-message: "chore: format code + regenerate uv.lock"
           title: "Auto format + uv.lock"
           body: |
-            ✅ Black formatted code
+            ✅ Black formatted code  
             ✅ uv.lock regenerated automatically
           labels: "black, uv"
           branch: autofix/black-uv
           delete-branch: true
           add-paths: |
-            uv.lock
+            .
           committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           signoff: false
