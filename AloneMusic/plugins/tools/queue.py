@@ -18,7 +18,8 @@ import config
 from AloneMusic import app
 from AloneMusic.misc import db
 from AloneMusic.utils import AloneBin, get_channeplayCB, seconds_to_min
-from AloneMusic.utils.database import get_cmode, is_active_chat, is_music_playing
+from AloneMusic.utils.database import (get_cmode, is_active_chat,
+                                       is_music_playing)
 from AloneMusic.utils.decorators.language import language, languageCB
 from AloneMusic.utils.inline import queue_back_markup, queue_markup
 from config import BANNED_USERS

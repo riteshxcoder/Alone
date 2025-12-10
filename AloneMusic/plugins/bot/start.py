@@ -6,24 +6,21 @@
 #
 # All rights reserved.
 
-import time
 import random
+import time
+
+from py_yt import VideosSearch
 from pyrogram import filters
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from py_yt import VideosSearch
+
 import config
 from AloneMusic import app
 from AloneMusic.misc import _boot_
 from AloneMusic.plugins.sudo.sudoers import sudoers_list
-from AloneMusic.utils.database import (
-    add_served_chat,
-    add_served_user,
-    blacklisted_chats,
-    get_lang,
-    is_banned_user,
-    is_on_off,
-)
+from AloneMusic.utils.database import (add_served_chat, add_served_user,
+                                       blacklisted_chats, get_lang,
+                                       is_banned_user, is_on_off)
 from AloneMusic.utils.decorators.language import LanguageStart
 from AloneMusic.utils.formatters import get_readable_time
 from AloneMusic.utils.inline import help_pannel, private_panel, start_panel

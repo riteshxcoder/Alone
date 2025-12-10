@@ -8,21 +8,21 @@
 # All rights reserved.
 
 import asyncio
-import os
-import re
 import json
+import os
+import random
+import re
 from typing import Union
+from urllib.parse import quote_plus
+
 import aiohttp
 import yt_dlp
+from py_yt import VideosSearch
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-from py_yt import VideosSearch
+
 from AloneMusic.utils.database import is_on_off
 from AloneMusic.utils.formatters import time_to_seconds
-import glob
-import random
-import logging
-from urllib.parse import quote_plus
 
 API_URL = "https://kartik.opusx.workers.dev/yt"
 DOWNLOAD_FOLDER = "downloads"
@@ -54,9 +54,9 @@ async def _fetch_json_aio(
                 if resp.status == 200:
                     return await resp.json()
                 else:
-                    last_status = resp.status
+                    pass
         except Exception:
-            last_status = None
+            pass
         if attempt < retries - 1:
             await asyncio.sleep(backoff)
             backoff = min(backoff * 2, 16)
@@ -370,7 +370,7 @@ class YouTubeAPI:
                     str(format["format"])
                 except:
                     continue
-                if not "dash" in str(format["format"]).lower():
+                if "dash" not in str(format["format"]).lower():
                     try:
                         format["format"]
                         format["filesize"]

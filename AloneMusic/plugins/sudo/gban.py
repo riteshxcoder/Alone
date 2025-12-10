@@ -16,14 +16,9 @@ from pyrogram.types import Message
 from AloneMusic import app
 from AloneMusic.misc import SUDOERS
 from AloneMusic.utils import get_readable_time
-from AloneMusic.utils.database import (
-    add_banned_user,
-    get_banned_count,
-    get_banned_users,
-    get_served_chats,
-    is_banned_user,
-    remove_banned_user,
-)
+from AloneMusic.utils.database import (add_banned_user, get_banned_count,
+                                       get_banned_users, get_served_chats,
+                                       is_banned_user, remove_banned_user)
 from AloneMusic.utils.decorators.language import language
 from AloneMusic.utils.extraction import extract_user
 from config import BANNED_USERS

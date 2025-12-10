@@ -12,16 +12,10 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from AloneMusic import app
 from AloneMusic.misc import SUDOERS, db
-from AloneMusic.utils.database import (
-    get_authuser_names,
-    get_cmode,
-    get_lang,
-    get_upvote_count,
-    is_active_chat,
-    is_maintenance,
-    is_nonadmin_chat,
-    is_skipmode,
-)
+from AloneMusic.utils.database import (get_authuser_names, get_cmode, get_lang,
+                                       get_upvote_count, is_active_chat,
+                                       is_maintenance, is_nonadmin_chat,
+                                       is_skipmode)
 from config import SUPPORT_CHAT, adminlist, confirmer
 from strings import get_string
 

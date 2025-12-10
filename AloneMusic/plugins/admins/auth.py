@@ -12,12 +12,8 @@ from pyrogram.types import Message
 
 from AloneMusic import app
 from AloneMusic.utils import extract_user, int_to_alpha
-from AloneMusic.utils.database import (
-    delete_authuser,
-    get_authuser,
-    get_authuser_names,
-    save_authuser,
-)
+from AloneMusic.utils.database import (delete_authuser, get_authuser,
+                                       get_authuser_names, save_authuser)
 from AloneMusic.utils.decorators import AdminActual, language
 from AloneMusic.utils.inline import close_markup
 from config import BANNED_USERS, adminlist
