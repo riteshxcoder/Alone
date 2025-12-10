@@ -10,8 +10,8 @@
 import math
 
 from pyrogram.types import InlineKeyboardButton
-from AloneMusic import app
 
+from AloneMusic import app
 from AloneMusic.utils.formatters import time_to_seconds
 
 
@@ -31,7 +31,6 @@ def track_markup(_, videoid, user_id, channel, fplay):
     return buttons
 
 
-
 def stream_markup_timer(_, chat_id, played, dur):
     played_sec = time_to_seconds(played)
     duration_sec = time_to_seconds(dur)
@@ -39,7 +38,7 @@ def stream_markup_timer(_, chat_id, played, dur):
     remaining_sec = duration_sec - played_sec
     if remaining_sec < 0:
         remaining_sec = 0
-    
+
     rem_min = remaining_sec // 60
     rem_sec = remaining_sec % 60
     remaining = f"{rem_min:02d}:{rem_sec:02d}"
