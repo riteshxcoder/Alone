@@ -8,12 +8,8 @@
 # All rights reserved.
 
 from pyrogram import filters
-from pyrogram.types import (
-    CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    Message,
-)
+from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message)
 
 from AloneMusic import app
 from AloneMusic.utils.database import get_lang, set_lang
@@ -32,10 +28,7 @@ def languages_keyboard(_):
     ]
 
     keyboard = InlineKeyboardMarkup(
-        [
-            buttons[i : i + 2]
-            for i in range(0, len(buttons), 2)
-        ]
+        [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
         + [
             [
                 InlineKeyboardButton(
@@ -69,9 +62,7 @@ async def language_cb(client, callback_query: CallbackQuery, _):
     except Exception:
         return
 
-    await callback_query.edit_message_reply_markup(
-        reply_markup=languages_keyboard(_)
-    )
+    await callback_query.edit_message_reply_markup(reply_markup=languages_keyboard(_))
 
 
 @app.on_callback_query(filters.regex(r"^languages:(.*?)") & ~BANNED_USERS)
@@ -92,6 +83,4 @@ async def language_markup(client, callback_query: CallbackQuery, _):
     await set_lang(callback_query.message.chat.id, language_code)
     await callback_query.answer(_["lang_2"], show_alert=True)
 
-    await callback_query.edit_message_reply_markup(
-        reply_markup=languages_keyboard(_)
-    )
+    await callback_query.edit_message_reply_markup(reply_markup=languages_keyboard(_))
