@@ -13,7 +13,7 @@ import os
 import random
 import re
 from typing import Union
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlparse
 
 import aiohttp
 import yt_dlp
@@ -314,8 +314,9 @@ class YouTubeAPI:
             link = self.listbase + link
         if "&" in link:
             link = link.split("&")[0]
-        if "music.youtube.com" in link:
-            link = link.replace("music.youtube.com", "www.youtube.com")
+        parsed_link = urlparse(link)
+        if parsed_link.hostname == "music.youtube.com":
+            link = link.replace("music.youtube.com", "www.youtube.com", 1)
         cookie_file = cookie_txt_file()
         if not cookie_file:
             return []
