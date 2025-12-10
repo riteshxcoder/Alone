@@ -9,16 +9,11 @@
 
 from pyrogram import filters
 from pyrogram.types import Message
+
 from AloneMusic import app
 from AloneMusic.misc import SUDOERS
-from AloneMusic.utils.database import (
-    autoend_off,
-    autoend_on,
-    autoleave_off,
-    autoleave_on,
-    is_autoend,
-    is_autoleave,
-)
+from AloneMusic.utils.database import (autoend_off, autoend_on, autoleave_off,
+                                       autoleave_on, is_autoend, is_autoleave)
 
 
 @app.on_message(filters.command("autoend") & SUDOERS)

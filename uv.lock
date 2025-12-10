@@ -126,7 +126,6 @@ dependencies = [
     { name = "psutil" },
     { name = "py-tgcalls" },
     { name = "py-yt-search" },
-    { name = "pykeyboard" },
     { name = "pyrofork" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
@@ -161,7 +160,6 @@ requires-dist = [
     { name = "psutil", specifier = ">=5.9.8" },
     { name = "py-tgcalls", specifier = "==2.2.8" },
     { name = "py-yt-search", specifier = "==0.5.3" },
-    { name = "pykeyboard", specifier = "<=0.1.5" },
     { name = "pyrofork", specifier = ">=2.3.45" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyyaml", specifier = ">=6.0.1" },
@@ -965,16 +963,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pykeyboard"
-version = "0.1.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyrogram" },
-    { name = "tgcrypto" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/7e/c49621c33ccbd5d04a6a12be2082b8f9941cf89b97f81e1aa42713a87829/pykeyboard-0.1.5.tar.gz", hash = "sha256:b77be4341129ae73e363d46fe1f3243132fc04932f4ad2f7f8234d0971de4de4", size = 7466, upload-time = "2022-02-01T12:20:20.589Z" }
-
-[[package]]
 name = "pymediainfo-pyrofork"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1036,19 +1024,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ce/6a/a35f0b5606d10c12dd4c6fadf0af5eb3b9f460a2eeefe88a3496d01a3881/pyrofork-2.3.68.tar.gz", hash = "sha256:12dcc7b78d2179b4e13fdbe31121d9235c4bf0089bc946c47ede62647f19229f", size = 501077, upload-time = "2025-07-10T12:59:52.02Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c4/8f/9fa88de00f6c02dcb77cbaa5a65d47f34a9bf2f804eb98d5183389634c3a/pyrofork-2.3.68-py3-none-any.whl", hash = "sha256:1a93c062682f0ed7e5fffd01b4f878e663cce0eea8a0df06c93f005768d8697a", size = 5043277, upload-time = "2025-07-10T12:59:49.935Z" },
-]
-
-[[package]]
-name = "pyrogram"
-version = "2.0.106"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyaes" },
-    { name = "pysocks" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/8e/5d09eca17271320bb9a95e50b7e053770aee85b3fd338e8267e7b6b280ae/Pyrogram-2.0.106.tar.gz", hash = "sha256:30202995758fcb6e0f91224704ab7fedefea454297724bd70a6a71a23748c16f", size = 345997, upload-time = "2023-04-30T18:24:45.506Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/88/502ec24914d208e06baa6f27ff812f46815bb4f302018ad848ebf518abdf/Pyrogram-2.0.106-py3-none-any.whl", hash = "sha256:32b62b3d93030b1080cbe45b88c0e8790cf4e2179cf3321ede810d48edf97bc7", size = 3573685, upload-time = "2023-04-30T18:24:41.986Z" },
 ]
 
 [[package]]

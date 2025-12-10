@@ -17,7 +17,8 @@ from pyrogram.types import CallbackQuery, Message
 from AloneMusic import app
 from AloneMusic.core.call import Alone
 from AloneMusic.misc import db
-from AloneMusic.utils.database import get_assistant, get_authuser_names, get_cmode
+from AloneMusic.utils.database import (get_assistant, get_authuser_names,
+                                       get_cmode)
 from AloneMusic.utils.decorators import ActualAdminCB, AdminActual, language
 from AloneMusic.utils.formatters import alpha_to_int, get_readable_time
 from config import BANNED_USERS, adminlist, lyrical

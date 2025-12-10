@@ -8,9 +8,8 @@
 # All rights reserved.
 
 import random
-import asyncio
-from datetime import date
 from typing import Dict, List, Union
+
 from AloneMusic import userbot
 from AloneMusic.core.mongo import mongodb
 

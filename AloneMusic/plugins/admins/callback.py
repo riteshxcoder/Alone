@@ -8,38 +8,26 @@
 # All rights reserved.
 
 import asyncio
+
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from AloneMusic import YouTube, app
 from AloneMusic.core.call import Alone
 from AloneMusic.misc import SUDOERS, db
-from AloneMusic.utils.database import (
-    get_active_chats,
-    get_lang,
-    get_upvote_count,
-    is_active_chat,
-    is_music_playing,
-    is_nonadmin_chat,
-    music_off,
-    music_on,
-    set_loop,
-)
+from AloneMusic.utils.database import (get_active_chats, get_lang,
+                                       get_upvote_count, is_active_chat,
+                                       is_music_playing, is_nonadmin_chat,
+                                       music_off, music_on, set_loop)
 from AloneMusic.utils.decorators.language import languageCB
 from AloneMusic.utils.formatters import seconds_to_min
-from AloneMusic.utils.inline import close_markup, stream_markup, stream_markup_timer
+from AloneMusic.utils.inline import (close_markup, stream_markup,
+                                     stream_markup_timer)
 from AloneMusic.utils.stream.autoclear import auto_clean
 from AloneMusic.utils.thumbnails import get_thumb
-from config import (
-    BANNED_USERS,
-    SOUNCLOUD_IMG_URL,
-    STREAM_IMG_URL,
-    TELEGRAM_AUDIO_URL,
-    TELEGRAM_VIDEO_URL,
-    adminlist,
-    confirmer,
-    votemode,
-)
+from config import (BANNED_USERS, SOUNCLOUD_IMG_URL, STREAM_IMG_URL,
+                    TELEGRAM_AUDIO_URL, TELEGRAM_VIDEO_URL, adminlist,
+                    confirmer, votemode)
 from strings import get_string
 
 checker = {}
@@ -92,7 +80,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                 exists = confirmer[chat_id][CallbackQuery.message.id]
                 current = db[chat_id][0]
             except:
-                return await CallbackQuery.edit_message_text(f"ғᴀɪʟᴇᴅ.")
+                return await CallbackQuery.edit_message_text("ғᴀɪʟᴇᴅ.")
             try:
                 if current["vidid"] != exists["vidid"]:
                     return await CallbackQuery.edit_message.text(_["admin_35"])

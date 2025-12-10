@@ -16,12 +16,8 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Voice
 
 import config
 from AloneMusic import app
-from AloneMusic.utils.formatters import (
-    check_duration,
-    convert_bytes,
-    get_readable_time,
-    seconds_to_min,
-)
+from AloneMusic.utils.formatters import (check_duration, convert_bytes,
+                                         get_readable_time, seconds_to_min)
 
 
 class TeleAPI:

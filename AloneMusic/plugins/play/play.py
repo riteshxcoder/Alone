@@ -6,28 +6,26 @@
 # Please see < https://github.com/TheAloneTeam/AloneMusic/blob/master/LICENSE >
 # All rights reserved.
 
+import asyncio
 import random
 import string
-import asyncio
+
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from AloneMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
+from AloneMusic import (Apple, Resso, SoundCloud, Spotify, Telegram, YouTube,
+                        app)
 from AloneMusic.core.call import Alone
 from AloneMusic.utils import seconds_to_min, time_to_seconds
 from AloneMusic.utils.channelplay import get_channeplayCB
 from AloneMusic.utils.decorators.language import languageCB
 from AloneMusic.utils.decorators.play import PlayWrapper
 from AloneMusic.utils.formatters import formats
-from AloneMusic.utils.inline import (
-    botplaylist_markup,
-    livestream_markup,
-    playlist_markup,
-    slider_markup,
-    track_markup,
-)
+from AloneMusic.utils.inline import (botplaylist_markup, livestream_markup,
+                                     playlist_markup, slider_markup,
+                                     track_markup)
 from AloneMusic.utils.logger import play_logs
 from AloneMusic.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
@@ -117,7 +115,7 @@ async def play_commnd(
     if audio_telegram:
         if audio_telegram.file_size > 104857600:
             return await mystic.edit_text(_["play_5"])
-        duration_min = seconds_to_min(audio_telegram.duration)
+        seconds_to_min(audio_telegram.duration)
         if (audio_telegram.duration) > config.DURATION_LIMIT:
             return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
@@ -459,7 +457,7 @@ async def play_commnd(
                     ),
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
-                return await play_logs(message, streamtype=f"Searched on Youtube")
+                return await play_logs(message, streamtype="Searched on Youtube")
             else:
                 buttons = track_markup(
                     _,
@@ -474,7 +472,7 @@ async def play_commnd(
                     caption=cap,
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
-                return await play_logs(message, streamtype=f"URL Searched Inline")
+                return await play_logs(message, streamtype="URL Searched Inline")
 
 
 @app.on_callback_query(filters.regex("MusicStream") & ~BANNED_USERS)

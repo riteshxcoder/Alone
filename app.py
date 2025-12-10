@@ -7,7 +7,6 @@
 # All rights reserved.
 
 import sys
-import asyncio
 
 print("🚀 Starting AloneMusic Bot...")
 

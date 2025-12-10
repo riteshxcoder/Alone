@@ -11,10 +11,12 @@ import os
 import shutil
 import time
 from shutil import disk_usage
+from typing import Dict, Tuple
+
 from humanize import naturalsize
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from typing import Dict, List, Tuple
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
 from AloneMusic import app
 from AloneMusic.misc import SUDOERS
 
