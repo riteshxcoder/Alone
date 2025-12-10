@@ -1,42 +1,81 @@
+name: Full Repo Check (All Files)
 
-name: Black
-
-on: push
+on:
+  push:
+  pull_request:
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  black:
+  full-check:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install Black
-        run: |
-          pip install black
+      # ✅ Install UV
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-      - name: Run Black
-        id: black
-        run: |
-          black .
-          git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
+      - name: Add uv to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
+      # ✅ Sync dependencies strictly from uv.lock
+      - name: Sync from uv.lock
+        run: uv sync --frozen
+
+      # ✅ Install checking tools
+      - name: Install tools
+        run: |
+          uv pip install black isort ruff pip-audit
+
+      # ✅ CHECK ALL PYTHON FILES (RECURSIVE)
+      - name: Format all python files
+        run: |
+          uv run black .
+          uv run isort .
+
+      # ✅ Lint all python files
+      - name: Ruff check (all files)
+        run: uv run ruff check . --fix
+
+      # ✅ Verify uv.lock is fully up to date
+      - name: Check uv.lock consistency
+        run: |
+          uv lock
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "CHANGED=false" >> $GITHUB_ENV
+          fi
+
+      # ✅ Optional: dependency security audit
+      - name: Dependency audit
+        continue-on-error: true
+        run: uv run pip-audit
+
+      # ✅ Auto-create PR if ANY file changed
       - name: Create Pull Request
-        if: steps.black.outputs.changed == 'true'
+        if: env.CHANGED == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: "𝚻հҽ 𝚨Łꪮⲛ𝛆 🚩𝗧ε᧘‌ᴍ"
-          title: "Format code"
-          body: "Automated code formatting."
-          labels: "black"
-          branch: autofix-${{ github.run_id }}
+          commit-message: "Auto update: full repo check"
+          title: "✅ Automated full repo check (all files)"
+          body: |
+            ✔ All Python files formatted  
+            ✔ Imports sorted  
+            ✔ Lint issues fixed  
+            ✔ uv.lock verified & updated  
+
+            This PR was generated automatically.
+          labels: auto-fix, uv, ci
+          branch: repo-auto-check-${{ github.run_id }}
           delete-branch: true
-          committer: TheAloneTeam <TheAloneTeam@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: true
