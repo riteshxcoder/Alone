@@ -8,49 +8,36 @@
 # All rights reserved.
 
 import os
-import sys
+from typing import List
 
 import yaml
 
-languages: dict = {}
-languages_present: dict = {}
+languages = {}
+languages_present = {}
 
 
 def get_string(lang: str):
     return languages[lang]
 
 
-LANG_PATH = "./strings/langs/"
-
-for filename in os.listdir(LANG_PATH):
+for filename in os.listdir(r"./strings/langs/"):
     if "en" not in languages:
         languages["en"] = yaml.safe_load(
-            open(os.path.join(LANG_PATH, "en.yml"), encoding="utf8")
+            open(r"./strings/langs/en.yml", encoding="utf8")
         )
         languages_present["en"] = languages["en"]["name"]
-
-    if not filename.endswith(".yml"):
-        continue
-
-    language_name = filename[:-4]
-
-    if language_name == "en":
-        continue
-
-    languages[language_name] = yaml.safe_load(
-        open(os.path.join(LANG_PATH, filename), encoding="utf8")
-    )
-
-    for item in languages["en"]:
-        if item not in languages[language_name]:
-            languages[language_name][item] = languages["en"][item]
-
-    # ✅ FIXED: No bare except
+    if filename.endswith(".yml"):
+        language_name = filename[:-4]
+        if language_name == "en":
+            continue
+        languages[language_name] = yaml.safe_load(
+            open(r"./strings/langs/" + filename, encoding="utf8")
+        )
+        for item in languages["en"]:
+            if item not in languages[language_name]:
+                languages[language_name][item] = languages["en"][item]
     try:
         languages_present[language_name] = languages[language_name]["name"]
-    except KeyError:
-        print(
-            f"Language file '{filename}' is missing required key: 'name'",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    except:
+        print("There is some issue with the language file inside bot.")
+        exit()
