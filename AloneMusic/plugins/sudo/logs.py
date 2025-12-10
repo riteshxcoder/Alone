@@ -8,11 +8,10 @@
 # All rights reserved.
 
 from pyrogram import Client, filters
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from AloneMusic import app
-from AloneMusic.utils.database import (add_served_chat)
+from AloneMusic.utils.database import add_served_chat
 from config import LOGGER_ID as LOG_GROUP_ID
 
 
