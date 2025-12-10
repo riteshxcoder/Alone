@@ -7,9 +7,8 @@
 #
 # All rights reserved.
 
-from pykeyboard import InlineKeyboard
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, Message
 
 from AloneMusic import app
 from AloneMusic.utils.database import get_lang, set_lang
