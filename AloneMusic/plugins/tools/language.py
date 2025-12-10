@@ -8,8 +8,12 @@
 # All rights reserved.
 
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, InlineKeyboard,
-                            InlineKeyboardButton, Message)
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    Message,
+)
 
 from AloneMusic import app
 from AloneMusic.utils.database import get_lang, set_lang
@@ -19,25 +23,31 @@ from strings import get_string, languages_present
 
 
 def languages_keyboard(_):
-    keyboard = InlineKeyboard(row_width=2)
-    keyboard.add(
-        *[
-            InlineKeyboardButton(
-                text=languages_present[i],
-                callback_data=f"languages:{i}",
-            )
-            for i in languages_present
+    buttons = [
+        InlineKeyboardButton(
+            text=languages_present[i],
+            callback_data=f"languages:{i}",
+        )
+        for i in languages_present
+    ]
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            buttons[i : i + 2]
+            for i in range(0, len(buttons), 2)
         ]
-    )
-    keyboard.row(
-        InlineKeyboardButton(
-            text=_["BACK_BUTTON"],
-            callback_data="settingsback_helper",
-        ),
-        InlineKeyboardButton(
-            text=_["CLOSE_BUTTON"],
-            callback_data="close",
-        ),
+        + [
+            [
+                InlineKeyboardButton(
+                    text=_["BACK_BUTTON"],
+                    callback_data="settingsback_helper",
+                ),
+                InlineKeyboardButton(
+                    text=_["CLOSE_BUTTON"],
+                    callback_data="close",
+                ),
+            ]
+        ]
     )
     return keyboard
 
@@ -45,10 +55,9 @@ def languages_keyboard(_):
 @app.on_message(filters.command(["lang", "setlang", "language"]) & ~BANNED_USERS)
 @language
 async def langs_command(client, message: Message, _):
-    keyboard = languages_keyboard(_)
     await message.reply_text(
         _["lang_1"],
-        reply_markup=keyboard,
+        reply_markup=languages_keyboard(_),
     )
 
 
@@ -60,8 +69,9 @@ async def language_cb(client, callback_query: CallbackQuery, _):
     except Exception:
         return
 
-    keyboard = languages_keyboard(_)
-    await callback_query.edit_message_reply_markup(reply_markup=keyboard)
+    await callback_query.edit_message_reply_markup(
+        reply_markup=languages_keyboard(_)
+    )
 
 
 @app.on_callback_query(filters.regex(r"^languages:(.*?)") & ~BANNED_USERS)
@@ -82,5 +92,6 @@ async def language_markup(client, callback_query: CallbackQuery, _):
     await set_lang(callback_query.message.chat.id, language_code)
     await callback_query.answer(_["lang_2"], show_alert=True)
 
-    keyboard = languages_keyboard(_)
-    await callback_query.edit_message_reply_markup(reply_markup=keyboard)
+    await callback_query.edit_message_reply_markup(
+        reply_markup=languages_keyboard(_)
+    )
