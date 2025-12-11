@@ -37,7 +37,7 @@ async def get_thumb(videoid):
         for result in (await results.next())["result"]:
             try:
                 title = result["title"]
-                title = re.sub("\W+", " ", title)
+                title = re.sub(r"\W+", " ", title)
                 title = title.title()
             except:
                 title = "Unsupported Title"
@@ -188,7 +188,7 @@ async def get_thumb(videoid):
         return file_name
 
     except Exception as e:
-        print(e)
+        print(f"Error generating thumbnail: {e}")
         return YOUTUBE_IMG_URL
 
 
