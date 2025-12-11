@@ -90,33 +90,33 @@ confirmer = {}
 
 START_IMG_URL = getenv(
     "START_IMG_URL",
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg",
+    "https://files.catbox.moe/34xlvu.jpg",
 )
 PING_IMG_URL = getenv(
     "PING_IMG_URL",
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg",
+    "https://files.catbox.moe/34xlvu.jpg",
 )
-PLAYLIST_IMG_URL = "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
-STATS_IMG_URL = "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+PLAYLIST_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
+STATS_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 TELEGRAM_AUDIO_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
 TELEGRAM_VIDEO_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
-STREAM_IMG_URL = "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+STREAM_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 SOUNCLOUD_IMG_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
-YOUTUBE_IMG_URL = "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+YOUTUBE_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 SPOTIFY_ARTIST_IMG_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
 SPOTIFY_ALBUM_IMG_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
 SPOTIFY_PLAYLIST_IMG_URL = (
-    "https://graph.org/file/004b61545b493662eacf1-71a5b2f2f11ff4a41a.jpg"
+    "https://files.catbox.moe/34xlvu.jpg"
 )
 
 
