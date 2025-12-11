@@ -145,3 +145,14 @@ tmux new-session -d -s alone "source venv/bin/activate && python3 -m AloneMusic"
 echo "✅ AloneMusic Bot Deployed Successfully!"
 echo "➡ Bot running inside tmux session: alone"
 echo "➡ View logs: tmux attach -t alone"
+
+### 🔹 2. Update on **VPS**
+To update the bot on your VPS, run the following commands:
+```bash
+cd AloneMusic
+git pull
+source venv/bin/activate
+pip install -e .
+tmux kill-session -t alone
+tmux new-session -d -s alone "source venv/bin/activate && python3 -m AloneMusic"
+```
