@@ -98,26 +98,14 @@ PING_IMG_URL = getenv(
 )
 PLAYLIST_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 STATS_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
-TELEGRAM_AUDIO_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
-TELEGRAM_VIDEO_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
+TELEGRAM_AUDIO_URL = "https://files.catbox.moe/34xlvu.jpg"
+TELEGRAM_VIDEO_URL = "https://files.catbox.moe/34xlvu.jpg"
 STREAM_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
-SOUNCLOUD_IMG_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
+SOUNCLOUD_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 YOUTUBE_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
-SPOTIFY_ARTIST_IMG_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
-SPOTIFY_ALBUM_IMG_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
-SPOTIFY_PLAYLIST_IMG_URL = (
-    "https://files.catbox.moe/34xlvu.jpg"
-)
+SPOTIFY_ARTIST_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
+SPOTIFY_ALBUM_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
+SPOTIFY_PLAYLIST_IMG_URL = "https://files.catbox.moe/34xlvu.jpg"
 
 
 def time_to_seconds(time):
