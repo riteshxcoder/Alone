@@ -8,7 +8,7 @@
 
 import os
 
-from ..logging import LOGGER
+from ..logger import LOGGER
 
 
 def dirr():
