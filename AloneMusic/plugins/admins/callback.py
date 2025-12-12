@@ -158,37 +158,47 @@ async def del_back_playlist(client, CallbackQuery, _):
             txt = f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
             popped = None
             try:
+                old_mystic = check[0].get("mystic")
+                old_queue_msg = check[0].get("queue_msg")
+                
                 popped = check.pop(0)
                 if popped:
                     await auto_clean(popped)
+                
+                if old_mystic:
+                    await safe_delete(old_mystic)
+                if old_queue_msg:
+                    await safe_delete(old_queue_msg)
+                
                 if not check:
-                    await CallbackQuery.edit_message_text(
-                        f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
-                    )
-                    await CallbackQuery.message.reply_text(
-                        text=_["admin_6"].format(
-                            mention, CallbackQuery.message.chat.title
-                        ),
-                        reply_markup=close_markup(_),
-                    )
+                    skip_msg = await CallbackQuery.message.reply_text(txt, reply_markup=close_markup(_))
+                    await Xpbot.stop_stream(chat_id)
+                    await CallbackQuery.message.delete()
+                    await asyncio.sleep(3)
                     try:
-                        return await Alone.stop_stream(chat_id)
+                        await skip_msg.delete()
                     except:
-                        return
+                        pass
+                    return
             except:
                 try:
-                    await CallbackQuery.edit_message_text(
-                        f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
-                    )
-                    await CallbackQuery.message.reply_text(
-                        text=_["admin_6"].format(
-                            mention, CallbackQuery.message.chat.title
-                        ),
-                        reply_markup=close_markup(_),
-                    )
-                    return await Alone.stop_stream(chat_id)
+                    old_mystic = check[0].get("mystic") if check else None
+                    old_queue_msg = check[0].get("queue_msg") if check else None
+                    if old_mystic:
+                        await safe_delete(old_mystic)
+                    if old_queue_msg:
+                        await safe_delete(old_queue_msg)
                 except:
-                    return
+                    pass
+                skip_msg = await CallbackQuery.message.reply_text(txt, reply_markup=close_markup(_))
+                await Xpbot.stop_stream(chat_id)
+                await CallbackQuery.message.delete()
+                await asyncio.sleep(3)
+                try:
+                    await skip_msg.delete()
+                except:
+                    pass
+                return
         else:
             txt = f"➻ sᴛʀᴇᴀᴍ ʀᴇ-ᴘʟᴀʏᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
         await CallbackQuery.answer()
