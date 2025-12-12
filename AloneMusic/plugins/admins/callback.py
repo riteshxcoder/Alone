@@ -160,18 +160,20 @@ async def del_back_playlist(client, CallbackQuery, _):
             try:
                 old_mystic = check[0].get("mystic")
                 old_queue_msg = check[0].get("queue_msg")
-                
+
                 popped = check.pop(0)
                 if popped:
                     await auto_clean(popped)
-                
+
                 if old_mystic:
                     await safe_delete(old_mystic)
                 if old_queue_msg:
                     await safe_delete(old_queue_msg)
-                
+
                 if not check:
-                    skip_msg = await CallbackQuery.message.reply_text(txt, reply_markup=close_markup(_))
+                    skip_msg = await CallbackQuery.message.reply_text(
+                        txt, reply_markup=close_markup(_)
+                    )
                     await Xpbot.stop_stream(chat_id)
                     await CallbackQuery.message.delete()
                     await asyncio.sleep(3)
@@ -190,7 +192,9 @@ async def del_back_playlist(client, CallbackQuery, _):
                         await safe_delete(old_queue_msg)
                 except:
                     pass
-                skip_msg = await CallbackQuery.message.reply_text(txt, reply_markup=close_markup(_))
+                skip_msg = await CallbackQuery.message.reply_text(
+                    txt, reply_markup=close_markup(_)
+                )
                 await Xpbot.stop_stream(chat_id)
                 await CallbackQuery.message.delete()
                 await asyncio.sleep(3)
